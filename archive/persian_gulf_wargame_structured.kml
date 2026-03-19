@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2">
+<Document>
+
+<name>Persian Gulf Operational Simulation</name>
+
+<Folder>
+<name>US Forces</name>
+
+<NetworkLink>
+<name>Carrier Strike Groups</name>
+<Link>
+<href>layers/us_forces.kml</href>
+</Link>
+</NetworkLink>
+
+</Folder>
+
+<Folder>
+<name>Iranian Launch Network</name>
+
+<NetworkLink>
+<name>Launch Batteries</name>
+<Link>
+<href>layers/iran_launch_sites.kml</href>
+</Link>
+</NetworkLink>
+
+</Folder>
+
+<Folder>
+<name>Simulation Tracks</name>
+
+<NetworkLink>
+<name>Missile Tracks</name>
+<Link>
+<href>layers/missile_tracks.kml</href>
+</Link>
+</NetworkLink>
+
+<NetworkLink>
+<name>Interceptor Tracks</name>
+<Link>
+<href>layers/interceptor_tracks.kml</href>
+</Link>
+</NetworkLink>
+
+</Folder>
+
+</Document>
+</kml>

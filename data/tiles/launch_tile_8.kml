@@ -1,0 +1,1404 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2">
+<Document>
+
+<Placemark>
+<name>Launch Battery 8_0</name>
+<Point>
+<coordinates>59.936974623872985,27.51934190134821,0</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>Launch Battery 8_1</name>
+<Point>
+<coordinates>57.20467896298168,26.8385757831339,0</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>Launch Battery 8_2</name>
+<Point>
+<coordinates>58.665343366770195,27.236439228516105,0</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>Launch Battery 8_3</name>
+<Point>
+<coordinates>55.11490348199281,27.139100063240267,0</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>Launch Battery 8_4</name>
+<Point>
+<coordinates>53.98902013292108,28.213820371947953,0</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>Launch Battery 8_5</name>
+<Point>
+<coordinates>52.61544296925556,27.76537877451738,0</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>Launch Battery 8_6</name>
+<Point>
+<coordinates>51.19377722728333,27.579360108989817,0</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>Launch Battery 8_7</name>
+<Point>
+<coordinates>52.649853476089376,26.181874778711844,0</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>Launch Battery 8_8</name>
+<Point>
+<coordinates>53.33160054696116,27.86055600876731,0</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>Launch Battery 8_9</name>
+<Point>
+<coordinates>53.55270805507063,26.737072958229778,0</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>Launch Battery 8_10</name>
+<Point>
+<coordinates>51.7216874209974,27.504586889063138,0</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>Launch Battery 8_11</name>
+<Point>
+<coordinates>58.01192063270639,25.647575239303116,0</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>Launch Battery 8_12</name>
+<Point>
+<coordinates>56.158997625735395,26.44905497788774,0</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>Launch Battery 8_13</name>
+<Point>
+<coordinates>55.180406538364814,28.192732535972965,0</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>Launch Battery 8_14</name>
+<Point>
+<coordinates>51.45861503499945,27.350239255383848,0</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>Launch Battery 8_15</name>
+<Point>
+<coordinates>55.17896140995307,26.020249075981777,0</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>Launch Battery 8_16</name>
+<Point>
+<coordinates>54.761539309034426,26.812128821961785,0</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>Launch Battery 8_17</name>
+<Point>
+<coordinates>54.68567680760067,25.844372716341937,0</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>Launch Battery 8_18</name>
+<Point>
+<coordinates>56.68120752115939,28.485869869524397,0</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>Launch Battery 8_19</name>
+<Point>
+<coordinates>53.17038659112667,26.297973628909165,0</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>Launch Battery 8_20</name>
+<Point>
+<coordinates>57.06728834413738,25.44426908017967,0</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>Launch Battery 8_21</name>
+<Point>
+<coordinates>57.83658726122308,26.076522140663418,0</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>Launch Battery 8_22</name>
+<Point>
+<coordinates>51.04111290352357,27.259300421720678,0</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>Launch Battery 8_23</name>
+<Point>
+<coordinates>53.49112569832783,25.25138619689822,0</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>Launch Battery 8_24</name>
+<Point>
+<coordinates>55.25986448486414,26.242428798551167,0</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>Launch Battery 8_25</name>
+<Point>
+<coordinates>54.11553550351366,26.90242481739611,0</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>Launch Battery 8_26</name>
+<Point>
+<coordinates>57.30855865550808,27.093037260137873,0</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>Launch Battery 8_27</name>
+<Point>
+<coordinates>54.677244155690836,28.48959630702314,0</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>Launch Battery 8_28</name>
+<Point>
+<coordinates>53.69251080309537,28.072742924697728,0</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>Launch Battery 8_29</name>
+<Point>
+<coordinates>51.723476136060164,28.097919839239715,0</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>Launch Battery 8_30</name>
+<Point>
+<coordinates>51.696761930511165,27.014304270838572,0</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>Launch Battery 8_31</name>
+<Point>
+<coordinates>56.245826288769884,26.552931323722976,0</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>Launch Battery 8_32</name>
+<Point>
+<coordinates>58.09791163558588,26.89223616658601,0</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>Launch Battery 8_33</name>
+<Point>
+<coordinates>52.137149931846736,27.9356269001911,0</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>Launch Battery 8_34</name>
+<Point>
+<coordinates>57.994151999954454,28.016822520005846,0</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>Launch Battery 8_35</name>
+<Point>
+<coordinates>57.2465938611633,27.484359785821837,0</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>Launch Battery 8_36</name>
+<Point>
+<coordinates>54.34076084146124,26.93322728006863,0</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>Launch Battery 8_37</name>
+<Point>
+<coordinates>54.2891904699424,28.31094816700218,0</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>Launch Battery 8_38</name>
+<Point>
+<coordinates>55.01140430581462,26.344436343264988,0</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>Launch Battery 8_39</name>
+<Point>
+<coordinates>52.17657681329904,28.45884327141325,0</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>Launch Battery 8_40</name>
+<Point>
+<coordinates>57.19715208101246,26.26077217335503,0</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>Launch Battery 8_41</name>
+<Point>
+<coordinates>53.71864795815453,25.20539233008862,0</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>Launch Battery 8_42</name>
+<Point>
+<coordinates>55.44851377823038,26.98915816715153,0</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>Launch Battery 8_43</name>
+<Point>
+<coordinates>53.43513863133134,26.627848841043097,0</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>Launch Battery 8_44</name>
+<Point>
+<coordinates>56.61081746677274,27.005885959113552,0</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>Launch Battery 8_45</name>
+<Point>
+<coordinates>53.67850030598446,27.49441295691116,0</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>Launch Battery 8_46</name>
+<Point>
+<coordinates>58.20630902483341,27.90923518187185,0</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>Launch Battery 8_47</name>
+<Point>
+<coordinates>54.08942690732928,25.708520727843066,0</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>Launch Battery 8_48</name>
+<Point>
+<coordinates>52.47089636550471,26.487019658239134,0</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>Launch Battery 8_49</name>
+<Point>
+<coordinates>56.31546816519895,25.438629424927665,0</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>Launch Battery 8_50</name>
+<Point>
+<coordinates>52.36948833535014,26.560252486287602,0</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>Launch Battery 8_51</name>
+<Point>
+<coordinates>53.86693188447597,27.7983589961293,0</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>Launch Battery 8_52</name>
+<Point>
+<coordinates>55.412522542859705,28.300117153537467,0</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>Launch Battery 8_53</name>
+<Point>
+<coordinates>54.15466895417917,27.552150679057906,0</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>Launch Battery 8_54</name>
+<Point>
+<coordinates>51.628896216954914,27.257934047416942,0</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>Launch Battery 8_55</name>
+<Point>
+<coordinates>58.573039508730126,26.78570444162752,0</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>Launch Battery 8_56</name>
+<Point>
+<coordinates>55.651489195269406,25.254099822725905,0</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>Launch Battery 8_57</name>
+<Point>
+<coordinates>56.46154463643663,26.594836848772157,0</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>Launch Battery 8_58</name>
+<Point>
+<coordinates>59.215999010767476,27.84028296940013,0</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>Launch Battery 8_59</name>
+<Point>
+<coordinates>54.79901128308381,26.05109761690908,0</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>Launch Battery 8_60</name>
+<Point>
+<coordinates>51.07598885580207,26.67837574160673,0</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>Launch Battery 8_61</name>
+<Point>
+<coordinates>57.525043128038746,25.71846072798332,0</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>Launch Battery 8_62</name>
+<Point>
+<coordinates>58.602344587168574,26.4748148711239,0</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>Launch Battery 8_63</name>
+<Point>
+<coordinates>58.72882154623684,27.75280357459609,0</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>Launch Battery 8_64</name>
+<Point>
+<coordinates>59.260207174844936,26.6741517158308,0</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>Launch Battery 8_65</name>
+<Point>
+<coordinates>54.99278828281381,28.223871207469475,0</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>Launch Battery 8_66</name>
+<Point>
+<coordinates>58.93053598049588,27.504793942797296,0</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>Launch Battery 8_67</name>
+<Point>
+<coordinates>54.2094886118348,27.95818957835262,0</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>Launch Battery 8_68</name>
+<Point>
+<coordinates>59.35777221894985,25.76427194011035,0</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>Launch Battery 8_69</name>
+<Point>
+<coordinates>59.9805835946614,28.275429978258444,0</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>Launch Battery 8_70</name>
+<Point>
+<coordinates>54.00519884129584,25.938634532184007,0</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>Launch Battery 8_71</name>
+<Point>
+<coordinates>55.31703099687653,26.101527236083587,0</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>Launch Battery 8_72</name>
+<Point>
+<coordinates>58.32477833936771,25.481024659156937,0</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>Launch Battery 8_73</name>
+<Point>
+<coordinates>51.43533641700551,26.218629980327165,0</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>Launch Battery 8_74</name>
+<Point>
+<coordinates>59.42293941000041,26.81867977118434,0</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>Launch Battery 8_75</name>
+<Point>
+<coordinates>54.86488438831707,28.324896040607,0</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>Launch Battery 8_76</name>
+<Point>
+<coordinates>58.896199706365266,28.490480794922153,0</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>Launch Battery 8_77</name>
+<Point>
+<coordinates>57.97302305624015,28.16024194319288,0</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>Launch Battery 8_78</name>
+<Point>
+<coordinates>55.56771503275845,26.775133985060144,0</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>Launch Battery 8_79</name>
+<Point>
+<coordinates>52.83665389178798,28.11009732276417,0</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>Launch Battery 8_80</name>
+<Point>
+<coordinates>55.280725346791996,27.947845700456092,0</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>Launch Battery 8_81</name>
+<Point>
+<coordinates>52.70088400874785,27.028053470118397,0</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>Launch Battery 8_82</name>
+<Point>
+<coordinates>51.390993230746304,26.462508872012428,0</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>Launch Battery 8_83</name>
+<Point>
+<coordinates>55.6044172966587,26.37614486935186,0</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>Launch Battery 8_84</name>
+<Point>
+<coordinates>59.185863416340865,26.19423275908434,0</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>Launch Battery 8_85</name>
+<Point>
+<coordinates>56.380678960439454,26.307096214046688,0</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>Launch Battery 8_86</name>
+<Point>
+<coordinates>59.725009006377505,28.35875640133399,0</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>Launch Battery 8_87</name>
+<Point>
+<coordinates>52.15542792626013,25.383047750967236,0</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>Launch Battery 8_88</name>
+<Point>
+<coordinates>54.143954308153496,27.765470475417928,0</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>Launch Battery 8_89</name>
+<Point>
+<coordinates>55.707363241491585,27.518641909830972,0</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>Launch Battery 8_90</name>
+<Point>
+<coordinates>53.623170108196426,25.57557775799621,0</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>Launch Battery 8_91</name>
+<Point>
+<coordinates>58.26431004191282,25.60227919816774,0</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>Launch Battery 8_92</name>
+<Point>
+<coordinates>51.21924140004302,25.199613419989866,0</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>Launch Battery 8_93</name>
+<Point>
+<coordinates>58.266047242067536,26.207064617520814,0</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>Launch Battery 8_94</name>
+<Point>
+<coordinates>51.898014194149134,25.11404170344109,0</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>Launch Battery 8_95</name>
+<Point>
+<coordinates>52.305015334175955,25.150166043839494,0</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>Launch Battery 8_96</name>
+<Point>
+<coordinates>56.83293267158599,27.920618411290203,0</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>Launch Battery 8_97</name>
+<Point>
+<coordinates>53.74076741788182,27.897319158890475,0</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>Launch Battery 8_98</name>
+<Point>
+<coordinates>52.92515516235421,27.899676889790328,0</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>Launch Battery 8_99</name>
+<Point>
+<coordinates>51.72209749534024,27.319132515639538,0</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>Launch Battery 8_100</name>
+<Point>
+<coordinates>51.88520131417738,26.540401070706153,0</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>Launch Battery 8_101</name>
+<Point>
+<coordinates>53.08118126484561,25.61873585196594,0</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>Launch Battery 8_102</name>
+<Point>
+<coordinates>56.126319158681504,26.038437586941132,0</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>Launch Battery 8_103</name>
+<Point>
+<coordinates>51.12849080540667,26.740720027996854,0</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>Launch Battery 8_104</name>
+<Point>
+<coordinates>53.651325828844726,25.143740921988197,0</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>Launch Battery 8_105</name>
+<Point>
+<coordinates>55.131084349291214,26.51044460918995,0</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>Launch Battery 8_106</name>
+<Point>
+<coordinates>51.40533853204757,25.115256803968084,0</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>Launch Battery 8_107</name>
+<Point>
+<coordinates>56.4775193305715,28.341261835407913,0</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>Launch Battery 8_108</name>
+<Point>
+<coordinates>55.236426546801255,26.025453835234448,0</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>Launch Battery 8_109</name>
+<Point>
+<coordinates>55.208129677228,27.202968830991843,0</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>Launch Battery 8_110</name>
+<Point>
+<coordinates>51.35265886197865,25.95479445634407,0</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>Launch Battery 8_111</name>
+<Point>
+<coordinates>53.436873589851245,27.117982393934987,0</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>Launch Battery 8_112</name>
+<Point>
+<coordinates>56.5760955331634,25.747311295446917,0</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>Launch Battery 8_113</name>
+<Point>
+<coordinates>58.31595455252615,27.765986853054407,0</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>Launch Battery 8_114</name>
+<Point>
+<coordinates>51.44595837365299,27.417580299253267,0</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>Launch Battery 8_115</name>
+<Point>
+<coordinates>55.745792892994615,26.68497722720951,0</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>Launch Battery 8_116</name>
+<Point>
+<coordinates>53.06910325842843,28.04371673667526,0</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>Launch Battery 8_117</name>
+<Point>
+<coordinates>58.157775145901645,25.3918449230671,0</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>Launch Battery 8_118</name>
+<Point>
+<coordinates>51.49577920414383,26.83645704933432,0</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>Launch Battery 8_119</name>
+<Point>
+<coordinates>54.658106271362776,25.80829103053848,0</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>Launch Battery 8_120</name>
+<Point>
+<coordinates>54.68702527932771,27.498530982440478,0</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>Launch Battery 8_121</name>
+<Point>
+<coordinates>52.07080158666705,27.164390877839086,0</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>Launch Battery 8_122</name>
+<Point>
+<coordinates>56.49238663319289,27.029202754477037,0</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>Launch Battery 8_123</name>
+<Point>
+<coordinates>55.05754150656867,26.00687842255429,0</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>Launch Battery 8_124</name>
+<Point>
+<coordinates>59.4043681049694,27.99249578267178,0</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>Launch Battery 8_125</name>
+<Point>
+<coordinates>56.433027841626696,26.085407543021287,0</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>Launch Battery 8_126</name>
+<Point>
+<coordinates>53.102949684720414,27.291465320241333,0</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>Launch Battery 8_127</name>
+<Point>
+<coordinates>52.14236093905306,26.895281511981903,0</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>Launch Battery 8_128</name>
+<Point>
+<coordinates>56.33465427040391,25.123775927108795,0</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>Launch Battery 8_129</name>
+<Point>
+<coordinates>57.08311193690535,25.86282557458919,0</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>Launch Battery 8_130</name>
+<Point>
+<coordinates>51.87944422636943,27.225288963252936,0</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>Launch Battery 8_131</name>
+<Point>
+<coordinates>57.40407902400513,25.547755859365537,0</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>Launch Battery 8_132</name>
+<Point>
+<coordinates>51.19134260845609,26.805380200363736,0</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>Launch Battery 8_133</name>
+<Point>
+<coordinates>51.663880946934995,25.141843396587557,0</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>Launch Battery 8_134</name>
+<Point>
+<coordinates>55.149829510128605,28.223483033527444,0</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>Launch Battery 8_135</name>
+<Point>
+<coordinates>59.87364901621276,27.053323827495433,0</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>Launch Battery 8_136</name>
+<Point>
+<coordinates>52.30910499720886,26.11195049206248,0</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>Launch Battery 8_137</name>
+<Point>
+<coordinates>59.78656993377136,25.145338579949403,0</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>Launch Battery 8_138</name>
+<Point>
+<coordinates>53.015891208834766,28.170359007599373,0</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>Launch Battery 8_139</name>
+<Point>
+<coordinates>58.77940549017288,27.447216979668926,0</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>Launch Battery 8_140</name>
+<Point>
+<coordinates>51.68372777273459,25.134718680560134,0</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>Launch Battery 8_141</name>
+<Point>
+<coordinates>52.53646403001397,27.458745856761933,0</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>Launch Battery 8_142</name>
+<Point>
+<coordinates>52.29306843171975,28.251983229349367,0</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>Launch Battery 8_143</name>
+<Point>
+<coordinates>51.433363397919734,28.23696096814857,0</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>Launch Battery 8_144</name>
+<Point>
+<coordinates>51.834577058318814,26.17429040827273,0</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>Launch Battery 8_145</name>
+<Point>
+<coordinates>57.36443083372571,25.50469699962372,0</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>Launch Battery 8_146</name>
+<Point>
+<coordinates>57.66991267428277,26.152462010948035,0</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>Launch Battery 8_147</name>
+<Point>
+<coordinates>52.74859778830677,25.68662027527521,0</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>Launch Battery 8_148</name>
+<Point>
+<coordinates>55.67845430674683,27.117585444391278,0</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>Launch Battery 8_149</name>
+<Point>
+<coordinates>55.521701640760334,27.664220939046842,0</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>Launch Battery 8_150</name>
+<Point>
+<coordinates>55.668576763885824,25.857644373192308,0</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>Launch Battery 8_151</name>
+<Point>
+<coordinates>51.13386853292516,27.24434702921447,0</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>Launch Battery 8_152</name>
+<Point>
+<coordinates>58.936336585359236,26.353276563606855,0</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>Launch Battery 8_153</name>
+<Point>
+<coordinates>56.92871232234392,25.460463217411576,0</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>Launch Battery 8_154</name>
+<Point>
+<coordinates>56.247162207592034,25.298584576523307,0</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>Launch Battery 8_155</name>
+<Point>
+<coordinates>57.71214085741721,25.398522640312805,0</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>Launch Battery 8_156</name>
+<Point>
+<coordinates>58.217767813216675,28.047895625066065,0</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>Launch Battery 8_157</name>
+<Point>
+<coordinates>53.814483489461736,25.135678585472753,0</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>Launch Battery 8_158</name>
+<Point>
+<coordinates>51.684627992471775,27.957971946885234,0</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>Launch Battery 8_159</name>
+<Point>
+<coordinates>55.93410352152604,27.886108198576988,0</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>Launch Battery 8_160</name>
+<Point>
+<coordinates>59.51019888295052,26.901769499129625,0</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>Launch Battery 8_161</name>
+<Point>
+<coordinates>58.07311261382577,28.442677017211253,0</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>Launch Battery 8_162</name>
+<Point>
+<coordinates>54.81889818720799,27.134594969270214,0</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>Launch Battery 8_163</name>
+<Point>
+<coordinates>52.61868474104112,27.369636903753825,0</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>Launch Battery 8_164</name>
+<Point>
+<coordinates>51.33519642492335,28.083948482466123,0</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>Launch Battery 8_165</name>
+<Point>
+<coordinates>51.42335890017278,26.54373571947616,0</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>Launch Battery 8_166</name>
+<Point>
+<coordinates>52.46102196834386,26.205045991896647,0</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>Launch Battery 8_167</name>
+<Point>
+<coordinates>55.085181789072266,25.390737064138793,0</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>Launch Battery 8_168</name>
+<Point>
+<coordinates>54.98510467116295,26.671436423095443,0</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>Launch Battery 8_169</name>
+<Point>
+<coordinates>54.955491031432764,26.013813081989603,0</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>Launch Battery 8_170</name>
+<Point>
+<coordinates>54.89807128926612,27.057780183099,0</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>Launch Battery 8_171</name>
+<Point>
+<coordinates>59.70832663265248,25.073134544312616,0</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>Launch Battery 8_172</name>
+<Point>
+<coordinates>55.434396667897424,26.45471414105521,0</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>Launch Battery 8_173</name>
+<Point>
+<coordinates>56.36467081304682,27.17069325475572,0</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>Launch Battery 8_174</name>
+<Point>
+<coordinates>59.88654888289884,27.666812969479086,0</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>Launch Battery 8_175</name>
+<Point>
+<coordinates>56.84325312658535,26.323919795296735,0</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>Launch Battery 8_176</name>
+<Point>
+<coordinates>58.968268802131576,26.402003415332402,0</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>Launch Battery 8_177</name>
+<Point>
+<coordinates>56.248909372260215,25.34421785859154,0</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>Launch Battery 8_178</name>
+<Point>
+<coordinates>59.54595882289688,28.098269792155712,0</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>Launch Battery 8_179</name>
+<Point>
+<coordinates>56.74939456998081,25.525206676857277,0</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>Launch Battery 8_180</name>
+<Point>
+<coordinates>56.080434125642434,28.167070183284213,0</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>Launch Battery 8_181</name>
+<Point>
+<coordinates>51.6243440584894,26.55358320710438,0</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>Launch Battery 8_182</name>
+<Point>
+<coordinates>56.049775861010055,28.39209825361883,0</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>Launch Battery 8_183</name>
+<Point>
+<coordinates>57.7467752271187,27.80254823414046,0</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>Launch Battery 8_184</name>
+<Point>
+<coordinates>58.437679919081205,25.67927752688831,0</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>Launch Battery 8_185</name>
+<Point>
+<coordinates>58.503375303319196,25.092462998780615,0</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>Launch Battery 8_186</name>
+<Point>
+<coordinates>56.757650737912826,27.501614186828963,0</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>Launch Battery 8_187</name>
+<Point>
+<coordinates>58.2510395126737,25.815361666033894,0</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>Launch Battery 8_188</name>
+<Point>
+<coordinates>55.718104486824814,27.594258407984384,0</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>Launch Battery 8_189</name>
+<Point>
+<coordinates>58.840882430250005,28.441190451009646,0</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>Launch Battery 8_190</name>
+<Point>
+<coordinates>53.109675767219905,25.92182684675592,0</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>Launch Battery 8_191</name>
+<Point>
+<coordinates>59.45905521760567,27.078510663023998,0</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>Launch Battery 8_192</name>
+<Point>
+<coordinates>54.86404430008199,25.322582355080474,0</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>Launch Battery 8_193</name>
+<Point>
+<coordinates>55.85433622562188,28.48269261502155,0</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>Launch Battery 8_194</name>
+<Point>
+<coordinates>55.61904022378421,26.774514592430876,0</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>Launch Battery 8_195</name>
+<Point>
+<coordinates>51.24662447623989,26.5189013859132,0</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>Launch Battery 8_196</name>
+<Point>
+<coordinates>51.53029103369436,27.443462183452016,0</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>Launch Battery 8_197</name>
+<Point>
+<coordinates>52.49802992341257,25.885430641081925,0</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>Launch Battery 8_198</name>
+<Point>
+<coordinates>52.61140435319191,28.009510081036794,0</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>Launch Battery 8_199</name>
+<Point>
+<coordinates>58.862022899962966,27.27241816386035,0</coordinates>
+</Point>
+</Placemark>
+</Document></kml>
