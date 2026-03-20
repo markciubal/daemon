@@ -2,14 +2,15 @@
 
 # Generate all 30 Kharg Island assault scenarios → output/scenarios/kharg_island_*.kmz
 kharg:
-	python -m persian_gulf_simulation.runner
+	python -m daemon.KHARG_ISLAND
 
 # Generate all 30 CSG naval engagement scenarios → output/scenarios/scenario_*.kmz
 csg:
-	python -m persian_gulf_simulation.generate_wargame_kml
+	python -m daemon.CSG_SIM
 
-# Generate everything
-all: kharg csg
+# Generate everything (Kharg + CSG)
+all:
+	python -m daemon.ALL
 
 # Remove all generated output
 clean:

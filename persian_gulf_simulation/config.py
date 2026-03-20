@@ -252,13 +252,19 @@ SHAHED_CEP_M    = 50   # GPS navigation CEP (m) — accuracy envelope around tar
 # ---------------------------------------------------------------------------
 # AI-CAPABLE DRONE PARAMETERS
 # ---------------------------------------------------------------------------
-# 5% of the drone swarm equipped with AI guidance: terrain-following path
-# planning, radar-return minimisation, and cooperative jamming between units.
-# Effect: SAM Pk reduced to 30% of baseline — guidance spoofing + evasive routing
-# makes intercept geometry harder. Based on: RAND "Countering AI-enabled UAS"
-# (2023); CNAS "AI Autonomy in Drone Swarms" (2024).
-AI_DRONE_FRACTION    = 0.0    # fraction of Shahed/island-Shahed marked AI (0 = disabled)
+# Minimum 2.5% of every Shahed swarm is AI-guided.  AI drones use computer-vision
+# target tracking and terrain-following routing, giving them two distinct advantages:
+#   1. Survivability: SAM Pk reduced to 30% of baseline (guidance spoofing + evasive
+#      routing makes intercept geometry harder).
+#   2. Lethality: when an AI drone reaches its target it deals 2× ship damage (precision
+#      fuze timing / hull-strike aiming) and has 2× lethal radius vs infantry (optimal
+#      burst-height detonation).
+# Floor of 2.5% reflects assessed IRGC fielding as of 2024.
+# Sources: RAND "Countering AI-enabled UAS" (2023); CNAS "AI Autonomy in Drone Swarms" (2024).
+AI_DRONE_FRACTION    = 0.025  # minimum fraction of Shahed/island-Shahed marked AI
 AI_DRONE_SAM_PK_MULT = 0.30   # SAM Pk multiplier vs AI drones (70% harder to intercept)
+AI_DRONE_SHIP_DMG    = 2      # HP damage dealt to ship by one AI drone hit (vs 1 for normal)
+AI_DRONE_LETHAL_KM   = 0.060  # lethal radius vs infantry for AI drone (60 m, vs 30 m normal)
 
 # US ship defence
 SHIP_SAM_RANGE_KM = 12.0   # SAM / ESSM engages Shahed

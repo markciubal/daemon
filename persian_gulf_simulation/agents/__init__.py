@@ -9,7 +9,6 @@ from persian_gulf_simulation.agents.factory import (
     init_ships,
     init_drone_boats,
     init_iran_bm,
-    init_island_shahed,
     init_shahed,
 )
 
@@ -23,6 +22,5 @@ __all__ = [
     "init_ships",
     "init_drone_boats",
     "init_iran_bm",
-    "init_island_shahed",
     "init_shahed",
 ]

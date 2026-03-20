@@ -407,7 +407,7 @@ def bm_to_placemarks(bm, bm_outcome_map, show_label=True):
 
 def _agent_label(agent_id, unit_name,
                   is_marine, is_stinger, is_drone, is_osprey,
-                  is_ship, is_dboat, is_shahed, is_island_shahed,
+                  is_ship, is_dboat, is_shahed,
                   phase_hp, max_hp, dead=False, is_air=False, is_ai=False):
     """Build a verbose placemark <name> for an agent.
 
@@ -430,8 +430,6 @@ def _agent_label(agent_id, unit_name,
         base = f"IRGCN FIAC {agent_id}"
     elif is_shahed:
         base = f"{'[AI] ' if is_ai else ''}Shahed-136 {agent_id}"
-    elif is_island_shahed:
-        base = f"{'[AI] ' if is_ai else ''}Shahed-136 Island Strike {agent_id}"
     else:
         # IRGC ground squad
         base = f"IRGC Squad {agent_id}"
@@ -570,7 +568,6 @@ def agent_to_placemarks(agent, is_marine, n_steps,
                          desc_html=None, desc_fn=None,
                          is_stinger=False, is_drone=False, is_osprey=False,
                          is_ship=False, is_dboat=False, is_shahed=False,
-                         is_island_shahed=False,
                          altitude_m=0, max_hp=None,
                          unit_name=None, is_ai=False, show_label=True,
                          track_sample=1, trim_pre_launch=False):
@@ -593,7 +590,7 @@ def agent_to_placemarks(agent, is_marine, n_steps,
 
     alt_mode   = "relativeToGround" if altitude_m > 0 else "clampToGround"
     alt_str    = str(int(altitude_m))
-    is_air     = is_osprey or is_drone or is_shahed or is_island_shahed
+    is_air     = is_osprey or is_drone or is_shahed
 
     placemarks = []
 
@@ -619,8 +616,7 @@ def agent_to_placemarks(agent, is_marine, n_steps,
         style   = _hp_style(phase_hp, is_marine, alive=True,
                              is_stinger=is_stinger, is_drone=is_drone,
                              is_osprey=is_osprey, is_ship=is_ship,
-                             is_dboat=is_dboat, is_shahed=is_shahed,
-                             is_island_shahed=is_island_shahed, is_ai=is_ai)
+                             is_dboat=is_dboat, is_shahed=is_shahed, is_ai=is_ai)
         t_begin = ts(pts[0][0])
         t_end   = ts(pts[-1][0])
         when_lines  = "\n          ".join(f"<when>{ts(s)}</when>" for s, _, _ in pts)
@@ -636,7 +632,7 @@ def agent_to_placemarks(agent, is_marine, n_steps,
         label = _agent_label(
             agent.agent_id, unit_name,
             is_marine, is_stinger, is_drone, is_osprey,
-            is_ship, is_dboat, is_shahed, is_island_shahed,
+            is_ship, is_dboat, is_shahed,
             phase_hp, max_hp, dead=False, is_air=is_air, is_ai=is_ai,
         ) if show_label else ""
         placemarks.append(f"""    <Placemark>
@@ -659,8 +655,7 @@ def agent_to_placemarks(agent, is_marine, n_steps,
         style     = _hp_style(0, is_marine, alive=False,
                                is_stinger=is_stinger, is_drone=is_drone,
                                is_osprey=is_osprey, is_ship=is_ship,
-                               is_dboat=is_dboat, is_shahed=is_shahed,
-                               is_island_shahed=is_island_shahed, is_ai=is_ai)
+                               is_dboat=is_dboat, is_shahed=is_shahed, is_ai=is_ai)
         if desc_fn is not None:
             desc_tag = f"\n      <description>{desc_fn(0)}</description>"
         elif desc_html:
@@ -688,7 +683,7 @@ def agent_to_placemarks(agent, is_marine, n_steps,
         dead_label = _agent_label(
             agent.agent_id, unit_name,
             is_marine, is_stinger, is_drone, is_osprey,
-            is_ship, is_dboat, is_shahed, is_island_shahed,
+            is_ship, is_dboat, is_shahed,
             0, max_hp, dead=True, is_air=is_air, is_ai=is_ai,
         ) if show_label else ""
         placemarks.append(f"""    <Placemark>

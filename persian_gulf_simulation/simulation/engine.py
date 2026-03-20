@@ -322,10 +322,12 @@ def run_simulation(marines, flights, flight_lz_center,
                 continue
             for ship in alive_ships:
                 if dist_km(sh.lon, sh.lat, ship.lon, ship.lat) <= cfg.SHIP_IMPACT_KM:
-                    ship.damage(1, step + 1)
+                    dmg = cfg.AI_DRONE_SHIP_DMG if sh.is_ai else 1
+                    ship.damage(dmg, step + 1)
                     sh.damage(sh.hp, step + 1)
                     ship_sh_hits[ship.agent_id] += 1
-                    ship_hit_log.append((step + 1, ship.agent_id, "Shahed-136", ship.hp))
+                    label = "Shahed-136 [AI]" if sh.is_ai else "Shahed-136"
+                    ship_hit_log.append((step + 1, ship.agent_id, label, ship.hp))
                     break
 
         # Refresh alive lists after maritime combat
@@ -420,16 +422,16 @@ def run_simulation(marines, flights, flight_lz_center,
                             sh.damage(sh.hp, step + 1)
                             island_sh_shot_down += 1
             # Move and impact
-            lethal_ish_km = 30.0 / 1000.0   # 30 m lethal radius (small warhead vs infantry)
             for sh in alive_ish:
                 if sh.hp <= 0:
                     continue
                 sh.lon, sh.lat = step_toward(sh.lon, sh.lat,
                                              sh.lz[0], sh.lz[1], cfg.SHAHED_SPEED_KPS)
                 if dist_km(sh.lon, sh.lat, sh.lz[0], sh.lz[1]) < 0.05:
+                    lethal_km = cfg.AI_DRONE_LETHAL_KM if sh.is_ai else 0.030
                     for m in cur_alive_mar:
                         if m.hp > 0 and m.landed and \
-                                dist_km(sh.lon, sh.lat, m.lon, m.lat) <= lethal_ish_km:
+                                dist_km(sh.lon, sh.lat, m.lon, m.lat) <= lethal_km:
                             m.damage(m.hp, step + 1)
                             island_sh_marine_kills += 1
                     sh.damage(sh.hp, step + 1)

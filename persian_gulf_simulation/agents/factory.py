@@ -165,20 +165,6 @@ def init_iran_bm(rng):
     return agents
 
 
-def init_island_shahed(rng):
-    """Shahed-136 loitering munitions targeting marine positions on island.
-    AI_DRONE_FRACTION of agents are marked is_ai=True — harder to intercept."""
-    n_ai   = round(cfg.N_ISLAND_SHAHED * cfg.AI_DRONE_FRACTION)
-    ai_set = set(rng.sample(range(cfg.N_ISLAND_SHAHED), n_ai)) if n_ai > 0 else set()
-    agents = []
-    for i in range(cfg.N_ISLAND_SHAHED):
-        lon = cfg.SHAHED_LAUNCH_LON + rng.uniform(-cfg.SHAHED_SPREAD_LON, cfg.SHAHED_SPREAD_LON)
-        lat = cfg.SHAHED_LAUNCH_LAT + rng.uniform(-cfg.SHAHED_SPREAD_LAT, cfg.SHAHED_SPREAD_LAT)
-        tlon, tlat = _sample_in_polygon(rng)
-        a = Agent(agent_id=f"IS{i:04d}", lon=lon, lat=lat, hp=cfg.SHAHED_HP, lz=(tlon, tlat))
-        a.is_ai = i in ai_set
-        agents.append(a)
-    return agents
 
 
 def init_sailors(rng):
@@ -204,25 +190,33 @@ def init_sailors(rng):
     return agents
 
 
-def init_shahed(rng, ships):
-    """50 Shahed-136 loitering munitions. Target split: 60% Tripoli, 25%/15% LPDs."""
-    n0 = int(cfg.N_SHAHED * 0.60)
-    n1 = int(cfg.N_SHAHED * 0.25)
-    n2 = cfg.N_SHAHED - n0 - n1
-    target_lzs = (
-        [(ships[0].lon, ships[0].lat)] * n0 +
-        [(ships[1].lon, ships[1].lat)] * n1 +
-        [(ships[2].lon, ships[2].lat)] * n2
-    )
-    rng.shuffle(target_lzs)
+def init_shahed(rng, targets, *, prefix="SH"):
+    """Unified Shahed-136 factory.
+
+    targets: list of ship agents → ship-targeting (SH prefix by default),
+                                   60% / 25% / 15% split across first three ships.
+             None                → island polygon sampling (IS prefix by default).
+    """
+    if targets is None:
+        n = cfg.N_ISLAND_SHAHED
+    else:
+        n  = cfg.N_SHAHED
+        n0 = int(n * 0.60); n1 = int(n * 0.25); n2 = n - n0 - n1
+        lz_pool = (
+            [(targets[0].lon, targets[0].lat)] * n0 +
+            [(targets[1].lon, targets[1].lat)] * n1 +
+            [(targets[2].lon, targets[2].lat)] * n2
+        )
+        rng.shuffle(lz_pool)
+
+    n_ai   = round(n * cfg.AI_DRONE_FRACTION)
+    ai_set = set(rng.sample(range(n), n_ai)) if n_ai > 0 else set()
     agents = []
-    n_ai   = round(cfg.N_SHAHED * cfg.AI_DRONE_FRACTION)
-    ai_set = set(rng.sample(range(cfg.N_SHAHED), n_ai)) if n_ai > 0 else set()
-    for i in range(cfg.N_SHAHED):
+    for i in range(n):
         lon = cfg.SHAHED_LAUNCH_LON + rng.uniform(-cfg.SHAHED_SPREAD_LON, cfg.SHAHED_SPREAD_LON)
         lat = cfg.SHAHED_LAUNCH_LAT + rng.uniform(-cfg.SHAHED_SPREAD_LAT, cfg.SHAHED_SPREAD_LAT)
-        a = Agent(agent_id=f"SH{i:04d}", lon=lon, lat=lat, hp=cfg.SHAHED_HP,
-                  lz=target_lzs[i])
+        lz  = _sample_in_polygon(rng) if targets is None else lz_pool[i]
+        a   = Agent(agent_id=f"{prefix}{i:04d}", lon=lon, lat=lat, hp=cfg.SHAHED_HP, lz=lz)
         a.is_ai = i in ai_set
         agents.append(a)
     return agents

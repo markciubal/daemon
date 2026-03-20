@@ -126,12 +126,13 @@ def build_kml_styles():
     <LabelStyle><color>1a222222</color><scale>0.6</scale></LabelStyle>
   </Style>""")
 
-    # ── Shahed kamikaze drone — red, plane icon ───────────────────────────────
+    # ── Shahed kamikaze drone — yellow open-diamond (CSG standard) ───────────
+    # KML AABBGGRR: cc00ffff = 80% opaque yellow (R=255, G=255, B=0)
     lines.append("""  <Style id="shahed_alive">
-    <IconStyle><color>ff0000cc</color><scale>0.55</scale>
-      <Icon><href>http://maps.google.com/mapfiles/kml/shapes/airports.png</href></Icon></IconStyle>
-    <LineStyle><color>590000cc</color><width>1.5</width></LineStyle>
-    <LabelStyle><color>ff0000cc</color><scale>0.6</scale></LabelStyle>
+    <IconStyle><color>cc00ffff</color><scale>0.65</scale>
+      <Icon><href>http://maps.google.com/mapfiles/kml/shapes/open-diamond.png</href></Icon></IconStyle>
+    <LineStyle><color>5900ffff</color><width>1.5</width></LineStyle>
+    <LabelStyle><color>cc00ffff</color><scale>0.6</scale></LabelStyle>
   </Style>""")
     lines.append("""  <Style id="shahed_dead">
     <IconStyle><color>1a222222</color><scale>0.4</scale>
@@ -140,11 +141,11 @@ def build_kml_styles():
     <LabelStyle><color>1a222222</color><scale>0.6</scale></LabelStyle>
   </Style>""")
 
-    # ── AI-capable Shahed — electric magenta, larger scale ───────────────────
+    # ── AI-capable Shahed — electric magenta open-diamond, larger scale ──────
     # KML AABBGGRR: magenta = ffff00ff  (full alpha, R=255, G=0, B=255)
     lines.append("""  <Style id="shahed_ai_alive">
     <IconStyle><color>ffff00ff</color><scale>0.85</scale>
-      <Icon><href>http://maps.google.com/mapfiles/kml/shapes/airports.png</href></Icon></IconStyle>
+      <Icon><href>http://maps.google.com/mapfiles/kml/shapes/open-diamond.png</href></Icon></IconStyle>
     <LineStyle><color>99ff00ff</color><width>2.5</width></LineStyle>
     <LabelStyle><color>ffff00ff</color><scale>0.75</scale></LabelStyle>
   </Style>""")
@@ -314,35 +315,6 @@ def build_kml_styles():
     <LabelStyle><color>ff0000ff</color><scale>0.6</scale></LabelStyle>
   </Style>""")
 
-    # ── Island-targeting Shahed — yellow-orange (distinct from ship-targeting red) ──
-    lines.append("""  <Style id="island_shahed_alive">
-    <IconStyle><color>ff00ccff</color><scale>0.55</scale>
-      <Icon><href>http://maps.google.com/mapfiles/kml/shapes/airports.png</href></Icon></IconStyle>
-    <LineStyle><color>5900ccff</color><width>1.5</width></LineStyle>
-    <LabelStyle><color>ff00ccff</color><scale>0.6</scale></LabelStyle>
-  </Style>""")
-    lines.append("""  <Style id="island_shahed_dead">
-    <IconStyle><color>1a222222</color><scale>0.4</scale>
-      <Icon><href>http://maps.google.com/mapfiles/kml/shapes/cross-hairs.png</href></Icon></IconStyle>
-    <LineStyle><color>40222222</color><width>1.5</width></LineStyle>
-    <LabelStyle><color>1a222222</color><scale>0.6</scale></LabelStyle>
-  </Style>""")
-
-    # ── AI-capable island Shahed — bright cyan-white, larger scale ───────────
-    # KML AABBGGRR: bright cyan = ffffff00  (R=0, G=255, B=255, A=255)
-    lines.append("""  <Style id="island_shahed_ai_alive">
-    <IconStyle><color>ffffff00</color><scale>0.85</scale>
-      <Icon><href>http://maps.google.com/mapfiles/kml/shapes/airports.png</href></Icon></IconStyle>
-    <LineStyle><color>99ffff00</color><width>2.5</width></LineStyle>
-    <LabelStyle><color>ffffff00</color><scale>0.75</scale></LabelStyle>
-  </Style>""")
-    lines.append("""  <Style id="island_shahed_ai_dead">
-    <IconStyle><color>1a222222</color><scale>0.4</scale>
-      <Icon><href>http://maps.google.com/mapfiles/kml/shapes/cross-hairs.png</href></Icon></IconStyle>
-    <LineStyle><color>40222222</color><width>1.5</width></LineStyle>
-    <LabelStyle><color>1a222222</color><scale>0.6</scale></LabelStyle>
-  </Style>""")
-
     raw = "\n".join(lines)
     balloon = ('    <BalloonStyle>'
                '<bgColor>ff000000</bgColor>'
@@ -354,19 +326,10 @@ def build_kml_styles():
 
 def _hp_style(hp, is_marine, alive=True,
               is_stinger=False, is_drone=False, is_osprey=False,
-              is_ship=False, is_dboat=False, is_shahed=False,
-              is_island_shahed=False, is_ai=False):
+              is_ship=False, is_dboat=False, is_shahed=False, is_ai=False):
     if is_ship:
         if not alive:
             return "#ship_sunk"
-        max_hp = 6  # highest possible
-        for s in SHIP_DEFS:
-            if s[3] == max_hp:
-                break
-        # Use bands: full, mid, low
-        all_max = [s[3] for s in SHIP_DEFS]
-        # Determine which ship this is by hp value relative to band
-        # Simple: >= 4 → healthy, 2-3 → damaged, 1 → critical
         if hp >= 4:
             return "#ship_healthy"
         elif hp >= 2:
@@ -376,10 +339,6 @@ def _hp_style(hp, is_marine, alive=True,
         if not alive:
             return "#dboat_dead"
         return f"#dboat_hp{max(1, min(2, hp))}"
-    if is_island_shahed:
-        if is_ai:
-            return "#island_shahed_ai_alive" if alive else "#island_shahed_ai_dead"
-        return "#island_shahed_alive" if alive else "#island_shahed_dead"
     if is_shahed:
         if is_ai:
             return "#shahed_ai_alive" if alive else "#shahed_ai_dead"

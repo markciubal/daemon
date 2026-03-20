@@ -55,11 +55,15 @@ def _card(title, accent, rows):
         f'<tr><td {tl}>{k}</td><td {tv}>{v}</td></tr>'
         for k, v in rows
     )
+    table = (
+        f'<table style="width:100%;border-collapse:collapse">{rows_html}</table>'
+        if rows_html else ""
+    )
     return (
         f'<![CDATA[<div style="{base}">'
         f'<div style="{title_style}">{title}</div>'
         f'{sep}'
-        f'<table style="width:100%;border-collapse:collapse">{rows_html}</table>'
+        f'{table}'
         f'</div>]]>'
     )
 

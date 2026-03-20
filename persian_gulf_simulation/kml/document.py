@@ -39,6 +39,7 @@ from persian_gulf_simulation.kml.narration import (
     extract_narration_events, narration_placemark, _narration_folder_desc,
 )
 from persian_gulf_simulation.kml.tour import gen_battle_tour
+from persian_gulf_simulation.kml.captions import gen_captions
 from persian_gulf_simulation.simulation.spatial import ts, ts_offset, dist_km
 
 
@@ -238,7 +239,7 @@ def gen_kml(marines, irgc, stingers, ospreys, drones,
             ish_pms.extend(agent_to_placemarks(
                 sh, is_marine=False, n_steps=N_STEPS,
                 desc_fn=lambda hp, _sh=sh: _shahed_desc(_sh, hp_override=hp, is_island=True),
-                is_island_shahed=True,
+                is_shahed=True,
                 altitude_m=SHAHED_ALT_M, max_hp=SHAHED_HP,
                 is_ai=sh.is_ai, show_label=(i % 10 == 0),
                 track_sample=2, trim_pre_launch=True,
@@ -337,6 +338,9 @@ def gen_kml(marines, irgc, stingers, ospreys, drones,
         0, _narration_folder_desc(narr_events), narr_pms
     )
 
+    # --- Closed Captions (screen overlays) ---
+    captions_kml, caption_files = gen_captions(narr_events)
+
     doc_desc = (extra_doc_desc if extra_doc_desc is not None
                 else _battle_summary_desc(marines, irgc, stingers, ospreys, ships, stats,
                                           scenario_label=scenario_label,
@@ -412,9 +416,10 @@ def gen_kml(marines, irgc, stingers, ospreys, drones,
   <description>{doc_desc}</description>
 {styles}
 {tour}
+{captions_kml}
 {battle_overview}
 {us_forces}
 {irgc_forces}
 </Document>
 </kml>"""
-    return kml
+    return kml, caption_files

@@ -16,7 +16,7 @@ import persian_gulf_simulation.config as cfg
 from persian_gulf_simulation.agents.factory import (
     init_marines, init_irgc, init_stingers, init_ospreys,
     init_drones, init_ships, init_drone_boats, init_shahed,
-    init_iran_bm, init_island_shahed, init_sailors,
+    init_iran_bm, init_sailors,
 )
 from persian_gulf_simulation.simulation.engine import run_simulation
 from persian_gulf_simulation.kml.document import gen_kml
@@ -143,8 +143,8 @@ def _run_scenario(out_kmz, scenario_label="Kharg Island Assault",
     drone_boats                    = init_drone_boats(rng, ships)
     shahed_drones                  = init_shahed(rng, ships)
     sailors                        = init_sailors(rng)
-    iran_bm_agents      = init_iran_bm(rng)        if iran_retaliation else None
-    island_sh_agents    = init_island_shahed(rng)  if iran_retaliation else None
+    iran_bm_agents      = init_iran_bm(rng)                          if iran_retaliation else None
+    island_sh_agents    = init_shahed(rng, None, prefix="IS")         if iran_retaliation else None
     if iran_retaliation:
         print(f"  {cfg.N_IRAN_BM} Iranian SRBMs  |  {cfg.N_ISLAND_SHAHED} island-targeting Shahed-136")
 
@@ -255,20 +255,24 @@ def _run_scenario(out_kmz, scenario_label="Kharg Island Assault",
             scenario_label=scenario_label,
             scenario_desc=scenario_desc,
         )
-    kml_str = gen_kml(marines, irgc, stingers, ospreys, drones,
-                      ships, drone_boats, shahed_drones,
-                      sim_stats, irgc_cm, flights,
-                      sim_stats["stinger_shots"],
-                      scenario_label=scenario_label,
-                      extra_doc_desc=extra_desc,
-                      iran_bm=iran_bm_agents,
-                      island_shahed=island_sh_agents,
-                      scenario_desc=scenario_desc)
+    kml_str, extra_files = gen_kml(
+        marines, irgc, stingers, ospreys, drones,
+        ships, drone_boats, shahed_drones,
+        sim_stats, irgc_cm, flights,
+        sim_stats["stinger_shots"],
+        scenario_label=scenario_label,
+        extra_doc_desc=extra_desc,
+        iran_bm=iran_bm_agents,
+        island_shahed=island_sh_agents,
+        scenario_desc=scenario_desc,
+    )
 
     os.makedirs(os.path.dirname(out_kmz), exist_ok=True)
     print(f"Writing {out_kmz} ...")
     with zipfile.ZipFile(out_kmz, "w", compression=zipfile.ZIP_DEFLATED) as zf:
         zf.writestr("doc.kml", kml_str.encode("utf-8"))
+        for path, data in extra_files.items():
+            zf.writestr(path, data)
 
     kml_bytes = len(kml_str.encode("utf-8"))
     kmz_bytes = os.path.getsize(out_kmz)
