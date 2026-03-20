@@ -1,5 +1,5 @@
 # DAEMON
-### *Dynamic Agent-based Engagement Model for Naval Operations*
+### *Dynamic Agent-based Engagement Model for Operational Networks*
 
 ---
 
