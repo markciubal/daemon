@@ -57,7 +57,7 @@ Output goes to `output/scenarios/`.
 
 1. Open **Google Earth Pro**
 2. **File → Open** → pick any `.kmz` from `output/scenarios/`
-3. Press **Play** on the timeline slider at the bottom
+3. In the layers side menu, double click on the generated "Battle Tour" and adjust the timeline with the slider at the bottom left once it starts playing.
 4. Click any unit for its data card
 
 Left panel folders toggle layers on/off. Start with everything off, enable one group at a time.
