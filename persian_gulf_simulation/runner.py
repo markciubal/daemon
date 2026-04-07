@@ -280,6 +280,28 @@ def _run_scenario(out_kmz, scenario_label="Kharg Island Assault",
     print(f"  KMZ size : {kmz_bytes/1024:.1f} KB")
     print("Done.")
 
+    # ---- Structured result dict (returned to callers; does not affect CLI output) ----
+    if island_held and not sunk:
+        outcome_str = "USMC secured"
+    elif alive_marines == 0:
+        outcome_str = "IRGC repelled"
+    else:
+        outcome_str = "Contested"
+
+    return {
+        "marines_alive":    alive_marines,
+        "marines_total":    len(marines),
+        "irgc_neutralized": kia_irgc,
+        "irgc_total":       len(irgc),
+        "ospreys_lost":     destroyed_ospreys,
+        "ospreys_total":    cfg.OSPREYS_PER_SORTIE,
+        "drone_kills":      total_drone_kills,
+        "ship_hits":        total_ship_hits,
+        "outcome":          outcome_str,
+        "sunk_ships":       sunk,
+        "stinger_kills":    stinger_kills,
+    }
+
 
 def build_scenarios():
     """Return the ordered list of scenario 4-tuples: (label, overrides, filename, description).
@@ -464,47 +486,48 @@ def build_scenarios():
          "FIM-92 Stinger at full effectiveness; 1,500 IRGC. "
          "Heavy MANPADS attrition reduces the Marine landing force before the ground battle begins."),
 
-        # 15 — SA-25 newer; Iran pursuing acquisition per FDD/JINSA reporting (2025–2026)
-        ("#15 — Russian 9K333 Verba SA-25 — 250 OPFOR",
-         _verba,
-         "kharg_15_verba_sa25_250opfor.kmz",
-         "9K333 Verba (SA-25) with 3-channel seeker and ECCM resistance — Pk 0.40/0.90. "
-         "Near-certain Osprey kills at LZ hover; tests whether a vertical assault remains viable."),
-
-        # 16 — TRAP/CASEVAC tasking can extend hover exposure window
-        ("#16 — FIM-92 Stinger, Extended LZ Hover 60s — 250 OPFOR",
+        # 15 — TRAP/CASEVAC tasking can extend hover exposure window
+        ("#15 — FIM-92 Stinger, Extended LZ Hover 60s — 250 OPFOR",
          {"osprey_drop_steps": 2},
-         "kharg_16_fim92_stinger_60s_lz_hover_250opfor.kmz",
+         "kharg_15_fim92_stinger_60s_lz_hover_250opfor.kmz",
          "Osprey hover time at LZ extended from 30 to 60 seconds. "
          "MANPADS Pk at hover is 0.75 — doubling the exposure window roughly doubles Osprey losses "
          "before a single Marine fires a shot."),
 
-        # 17 — DIRCM effectiveness against elevated OPFOR; operationally plausible combination
-        ("#17 — DIRCM Suppressed MANPADS (10% Pk) — 1,500 OPFOR",
-         {**_degraded, "n_irgc": 1500},
-         "kharg_17_dircm_suppressed_manpads_1500opfor.kmz",
-         "DIRCM-suppressed MANPADS at 1,500 OPFOR. "
-         "Tests whether DIRCM package can compensate for a 6× OPFOR force increase."),
-
-        # 18 — Ambitious but achievable US EW package against reinforced garrison
-        ("#18 — US EW Dominance, DIRCM + COMJAM + MILDEC — 1,500 OPFOR",
-         {**_ew_dominance, "n_irgc": 1500},
-         "kharg_18_ew_dominance_dircm_comjam_mildec_1500opfor.kmz",
-         "Full US EW package against 1,500 OPFOR. "
-         "Tests whether EW dominance can substitute for mass once the force-size phase threshold is crossed."),
-
-        # 19 — Iran–China defense relationship; QW-2 confirmed in PLA export catalog
-        ("#19 — PRC QW-2 MANPADS — 250 OPFOR",
+        # 16 — Iran–China defense relationship; QW-2 confirmed in PLA export catalog
+        ("#16 — PRC QW-2 MANPADS — 250 OPFOR",
          _qw2,
-         "kharg_19_prc_qw2_manpads_250opfor.kmz",
+         "kharg_16_prc_qw2_manpads_250opfor.kmz",
          "PRC QW-2 with proportional navigation IIR seeker — Pk 0.30/0.72. "
          "250 OPFOR. Represents Chinese MANPADS procurement pathway for IRGC."),
 
-        # 20 — Advanced MANPADS + reinforced garrison; requires SA-25 transfer completion
-        ("#20 — Russian Verba SA-25 — 1,500 OPFOR",
-         {**_verba, "n_irgc": 1500},
-         "kharg_20_verba_sa25_1500opfor.kmz",
-         "SA-25 against 1,500 OPFOR — worst-case MANPADS threat combined with maximum OPFOR strength."),
+        # 17 — FN-6 documented in Houthi/Hezbollah inventories; possible Iran pathway
+        ("#17 — PRC FN-6 HY-6 MANPADS — 250 OPFOR",
+         _fn6,
+         "kharg_17_prc_fn6_hy6_manpads_250opfor.kmz",
+         "PRC FN-6 (HY-6) with passive IR and rosette scanning seeker — Pk 0.28/0.78. "
+         "250 OPFOR."),
+
+        # 18 — DIRCM effectiveness against elevated OPFOR; operationally plausible combination
+        ("#18 — DIRCM Suppressed MANPADS (10% Pk) — 1,500 OPFOR",
+         {**_degraded, "n_irgc": 1500},
+         "kharg_18_dircm_suppressed_manpads_1500opfor.kmz",
+         "DIRCM-suppressed MANPADS at 1,500 OPFOR. "
+         "Tests whether DIRCM package can compensate for a 6× OPFOR force increase."),
+
+        # 19 — Ambitious but achievable US EW package against reinforced garrison
+        ("#19 — US EW Dominance, DIRCM + COMJAM + MILDEC — 1,500 OPFOR",
+         {**_ew_dominance, "n_irgc": 1500},
+         "kharg_19_ew_dominance_dircm_comjam_mildec_1500opfor.kmz",
+         "Full US EW package against 1,500 OPFOR. "
+         "Tests whether EW dominance can substitute for mass once the force-size phase threshold is crossed."),
+
+        # 20 — SA-25 newer; Iran pursuing acquisition per FDD/JINSA reporting (2025–2026)
+        ("#20 — Russian 9K333 Verba SA-25 — 250 OPFOR",
+         _verba,
+         "kharg_20_verba_sa25_250opfor.kmz",
+         "9K333 Verba (SA-25) with 3-channel seeker and ECCM resistance — Pk 0.40/0.90. "
+         "Near-certain Osprey kills at LZ hover; tests whether a vertical assault remains viable."),
 
         # 21 — Chinese MANPADS + crisis garrison
         ("#21 — PRC QW-2 MANPADS — 1,500 OPFOR",
@@ -512,18 +535,17 @@ def build_scenarios():
          "kharg_21_prc_qw2_manpads_1500opfor.kmz",
          "QW-2 against 1,500 OPFOR."),
 
-        # 22 — FN-6 documented in Houthi/Hezbollah inventories; possible Iran pathway
-        ("#22 — PRC FN-6 HY-6 MANPADS — 250 OPFOR",
-         _fn6,
-         "kharg_22_prc_fn6_hy6_manpads_250opfor.kmz",
-         "PRC FN-6 (HY-6) with passive IR and rosette scanning seeker — Pk 0.28/0.78. "
-         "250 OPFOR."),
-
-        # 23 — Same procurement pathway at elevated OPFOR
-        ("#23 — PRC FN-6 HY-6 MANPADS — 1,500 OPFOR",
+        # 22 — Same procurement pathway at elevated OPFOR
+        ("#22 — PRC FN-6 HY-6 MANPADS — 1,500 OPFOR",
          {**_fn6, "n_irgc": 1500},
-         "kharg_23_prc_fn6_hy6_manpads_1500opfor.kmz",
+         "kharg_22_prc_fn6_hy6_manpads_1500opfor.kmz",
          "FN-6 against 1,500 OPFOR."),
+
+        # 23 — Advanced MANPADS + reinforced garrison; requires SA-25 transfer completion
+        ("#23 — Russian Verba SA-25 — 1,500 OPFOR",
+         {**_verba, "n_irgc": 1500},
+         "kharg_23_verba_sa25_1500opfor.kmz",
+         "SA-25 against 1,500 OPFOR — worst-case MANPADS threat combined with maximum OPFOR strength."),
 
         # 24 — 2,000 on a 37 km² island; requires weeks of deliberate pre-war buildup
         ("#24 — FIM-92 Stinger — 2,000 OPFOR",
@@ -607,11 +629,12 @@ def run_scenario_entry(label, overrides, fname, desc, scenarios_dir=None):
     patch_args = {k: v for k, v in overrides.items() if k not in _STRIP}
     with _patch_scenario(**patch_args,
                          beach_assault=overrides.get("beach_assault", False)):
-        _run_scenario(out, scenario_label=label,
-                      pre_strike_survival_pct=pre_pct,
-                      n_irgc_pre=n_pre,
-                      iran_retaliation=iran_ret,
-                      scenario_desc=desc)
+        result = _run_scenario(out, scenario_label=label,
+                               pre_strike_survival_pct=pre_pct,
+                               n_irgc_pre=n_pre,
+                               iran_retaliation=iran_ret,
+                               scenario_desc=desc)
+    return result
 
 
 def main():

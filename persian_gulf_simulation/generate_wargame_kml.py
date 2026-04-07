@@ -1242,7 +1242,7 @@ _SHIP_ROLE_DAMAGE_SCALE = {
 #
 SCENARIOS = {
     "low": {
-        "label": "Scenario A -- Low Capability (8 CSGs)",
+        "label": "Scenario 11 -- Low Capability (8 CSGs)",
         "description": (
             "SITUATION: Iran executes a limited retaliatory probe using exclusively legacy munitions "
             "from its pre-2020 inventory. After absorbing approximately 50% inventory losses to "
@@ -1294,7 +1294,7 @@ SCENARIOS = {
         ],
     },
     "medium": {
-        "label": "Scenario B -- Medium Capability (8 CSGs)",
+        "label": "Scenario 07 -- Medium Capability (8 CSGs)",
         "description": (
             "SITUATION: Iran deploys its second-generation precision missile arsenal alongside "
             "a full-scale drone swarm. This scenario reflects Iran's assessed post-strike "
@@ -1342,7 +1342,7 @@ SCENARIOS = {
         ],
     },
     "realistic": {
-        "label": "Scenario D -- Realistic: Simultaneous Detection-Launch (8 CSGs)",
+        "label": "Scenario 01 -- Realistic: Simultaneous Detection-Launch (8 CSGs)",
         "description": (
             "SITUATION: Iran's integrated air-defense network detects inbound Israeli Air Force "
             "strike packages — F-35I Adirs, F-15I Ra'ams, and F-16I Sufas — crossing into "
@@ -1397,7 +1397,7 @@ SCENARIOS = {
         ],
     },
     "high": {
-        "label": "Scenario C -- High Capability / CAP HIT (8 CSGs)",
+        "label": "Scenario 20 -- High Capability / CAP HIT (8 CSGs)",
         "description": (
             "SITUATION: Iran fires near-maximum available post-strike inventory in a single "
             "compressed salvo, deliberately breaching the Aegis 4,000-round intercept capacity "
@@ -1446,7 +1446,7 @@ SCENARIOS = {
         ],
     },
     "iran_best": {
-        "label": "Scenario E -- Best Case Iran / CAP HIT (8 CSGs)",
+        "label": "Scenario 28 -- Best Case Iran / CAP HIT (8 CSGs)",
         "description": (
             "SITUATION: Iran achieves maximum operational coordination — full inventory "
             "commitment, synchronized multi-domain launch, and prolonged 90-minute salvo "
@@ -1499,7 +1499,7 @@ SCENARIOS = {
         ],
     },
     "usa_best": {
-        "label": "Scenario F -- Best Case USA (8 CSGs)",
+        "label": "Scenario 15 -- Best Case USA (8 CSGs)",
         "description": (
             "SITUATION: US pre-emptive strikes have degraded Iranian capabilities to the "
             "minimum viable threshold — approximately 30% of pre-crisis inventory remains "
@@ -1558,7 +1558,7 @@ SCENARIOS = {
     # CIWS magazines are partially empty when missiles arrive.
     # ==============================================================
     "drone_first_low": {
-        "label": "Scenario G -- Drone-First Low (Phased Assault)",
+        "label": "Scenario 08 -- Drone-First Low (Phased Assault)",
         "description": (
             "SITUATION: Iran employs its documented 'multi-echelon saturation' doctrine "
             "with legacy munitions. IRGCN tactical doctrine publicly describes sequential "
@@ -1606,7 +1606,7 @@ SCENARIOS = {
         ],
     },
     "drone_first_medium": {
-        "label": "Scenario H -- Drone-First Medium (Phased Assault)",
+        "label": "Scenario 10 -- Drone-First Medium (Phased Assault)",
         "description": (
             "SITUATION: Iran applies phased doctrine at medium capability — 1,335 Shahed "
             "drones fully exhaust all CIWS capacity before the precision missile layer "
@@ -1655,7 +1655,7 @@ SCENARIOS = {
         ],
     },
     "drone_first_high": {
-        "label": "Scenario I -- Drone-First High Saturation (Phased Assault)",
+        "label": "Scenario 23 -- Drone-First High Saturation (Phased Assault)",
         "description": (
             "SITUATION: Iran combines maximum drone employment with precision missile mass "
             "in a 2-hour phased assault. Unlike Scenario C (High, uncoordinated), the "
@@ -1705,7 +1705,7 @@ SCENARIOS = {
         ],
     },
     "coordinated_strike": {
-        "label": "Scenario G -- US/IAF Coordinated First Strike (Perfect Timing)",
+        "label": "Scenario 26 -- US/IAF Coordinated First Strike (Perfect Timing)",
         "description": (
             "SITUATION: The United States and Israel achieve true time-on-target synchronization "
             "for the opening strike window. All US TLAM/JASSM packages and Israeli Air Force "
@@ -1757,7 +1757,7 @@ SCENARIOS = {
     # SCENARIO H — Iranian Intelligence-Driven Focused Salvo
     # ------------------------------------------------------------------
     "focused_salvo": {
-        "label": "Scenario H -- Iranian Focused Salvo (All Fire on CVN-78 Ford)",
+        "label": "Scenario 27 -- Iranian Focused Salvo (All Fire on CVN-78 Ford)",
         "description": (
             "SITUATION: Iranian intelligence — likely from space-based electro-optical "
             "reconnaissance, signals intelligence intercepts, and commercial satellite "
@@ -1810,7 +1810,7 @@ SCENARIOS = {
     # SCENARIO I — Hypersonic Threat (Fattah-1 HGV Deployment)
     # ------------------------------------------------------------------
     "hypersonic_threat": {
-        "label": "Scenario I -- Hypersonic Threat (Fattah-1 HGV + Realistic Mix)",
+        "label": "Scenario 09 -- Hypersonic Threat (Fattah-1 HGV + Realistic Mix)",
         "description": (
             "SITUATION: Iran operationalizes the Fattah-1 hypersonic glide vehicle — "
             "announced by IRGCN in June 2023, claimed Mach 13–15, range 1,400 km. "
@@ -1864,7 +1864,7 @@ SCENARIOS = {
     # SCENARIO J — Pure Ballistic Barrage
     # ------------------------------------------------------------------
     "ballistic_barrage": {
-        "label": "Scenario J -- Pure Ballistic Barrage (No Drones, SM-6 Undistracted)",
+        "label": "Scenario 12 -- Pure Ballistic Barrage (No Drones, SM-6 Undistracted)",
         "description": (
             "SITUATION: Iran conducts a pure ballistic strike with no drone component — "
             "a scenario that might occur if drone inventory was exhausted in a prior "
@@ -1921,7 +1921,7 @@ SCENARIOS = {
     # SCENARIO BB — Full Ballistic Surge (2,500 Missiles, No Drones)
     # ------------------------------------------------------------------
     "ballistic_surge": {
-        "label": "Scenario BB -- Full Ballistic Surge (2,500 Missiles + 26 Tripoli Drones, 4 CSGs, 10% Fattah-1 HGV)",
+        "label": "Scenario 25 -- Full Ballistic Surge (2,500 Missiles + 26 Tripoli Drones, 4 CSGs, 10% Fattah-1 HGV)",
         "description": (
             "SITUATION: Iran commits its entire reconstituted ballistic missile stockpile "
             "(~2,500 rounds; Alma Research / 19FortyFive Feb 2026 estimate) in a single "
@@ -1998,7 +1998,7 @@ SCENARIOS = {
     # SCENARIO K — ASCM Swarm (Sea-Skimming Saturation)
     # ------------------------------------------------------------------
     "ascm_swarm": {
-        "label": "Scenario K -- ASCM Swarm (1,000 Sea-Skimming Anti-Ship Missiles)",
+        "label": "Scenario 16 -- ASCM Swarm (1,000 Sea-Skimming Anti-Ship Missiles)",
         "description": (
             "SITUATION: Iran executes a pure anti-ship cruise missile swarm — no ballistic "
             "missiles, no drones — using maximum available ASCM inventory plus maximum "
@@ -2050,7 +2050,7 @@ SCENARIOS = {
     # SCENARIO L — Shore-Based Layered Defense (THAAD + Patriot + Aegis)
     # ------------------------------------------------------------------
     "strait_transit": {
-        "label": "Scenario M -- Strait of Hormuz Column Transit (Maximum Threat)",
+        "label": "Scenario 22 -- Strait of Hormuz Column Transit (Maximum Threat)",
         "description": (
             "SITUATION: All 8 CSGs transit the Strait of Hormuz in single-file column — "
             "the only navigable deep-water channel (38–96 km wide, main shipping lane "
@@ -2101,7 +2101,7 @@ SCENARIOS = {
         ],
     },
     "shore_based_defense": {
-        "label": "Scenario L -- Shore-Based Layered Defense (THAAD + PAC-3 + Aegis)",
+        "label": "Scenario 21 -- Shore-Based Layered Defense (THAAD + PAC-3 + Aegis)",
         "description": (
             "SITUATION: US pre-deploys shore-based ballistic missile defense assets to the "
             "Gulf region before hostilities — a real capability available as of 2024. "
@@ -2166,7 +2166,7 @@ SCENARIOS = {
     # drone-first doctrine: drones exhaust CIWS/SM-6 before the residual
     # ballistic/cruise salvo arrives.
     "depleted_drone_first": {
-        "label": "Scenario O -- Depleted Arsenal: 8% Inventory, Drone-First Phase (8 CSGs)",
+        "label": "Scenario 03 -- Depleted Arsenal: 8% Inventory, Drone-First Phase (8 CSGs)",
         "description": "",   # overridden dynamically
         "custom_sites":   ALL_SITES,    # 37 sites: 12 coastal + 25 cave/tunnel complexes
         "n_missiles":     580,          # 8% of 7,250 realistic baseline
@@ -2196,7 +2196,7 @@ SCENARIOS = {
     # direct comparison: coastal sites are easier for US/IAF to strike
     # (TLAMs can destroy them), so site suppression is more effective here.
     "depleted_coastal": {
-        "label": "Scenario P -- Depleted Arsenal: 8% Inventory, Drone-First, All Sites (8 CSGs)",
+        "label": "Scenario 04 -- Depleted Arsenal: 8% Inventory, Drone-First, All Sites (8 CSGs)",
         "description": "",   # overridden dynamically
         "custom_sites":   ALL_SITES,    # 37 sites: 12 coastal + 25 cave/tunnel complexes
         "n_missiles":     580,          # 8% of 7,250 realistic baseline
@@ -2231,7 +2231,7 @@ SCENARIOS = {
     # before the ballistic follow-on, but defenses are correspondingly less
     # depleted when missiles arrive.
     "depleted_israel_split": {
-        "label": "Scenario Q -- Depleted Arsenal: Drone Waves Alternating Gulf/Israel (8 CSGs)",
+        "label": "Scenario 06 -- Depleted Arsenal: Drone Waves Alternating Gulf/Israel (8 CSGs)",
         "description": "",   # overridden dynamically
         "custom_sites":         ALL_SITES,    # 37 sites: 12 coastal + 25 cave/tunnel
         "israel_drone_alternation": 4,        # phase-1 split into 4 sub-windows; odd → Israel
@@ -2271,7 +2271,7 @@ SCENARIOS = {
     # λ ≈ 4.4 breakthroughs/CSG → P_win ≈ 94 %
     # ------------------------------------------------------------------
     "us_win_preemption": {
-        "label": "Scenario R -- US Wins: Preemptive Strike Success [P_win ≈ 94%] (8 CSGs)",
+        "label": "Scenario 19 -- US Wins: Preemptive Strike Success [P_win ≈ 94%] (8 CSGs)",
         "description": "",   # overridden dynamically
         "custom_sites":         INLAND_AND_CAVES,   # US strikes deplete all inland + cave sites
         "n_missiles":           280,                # only ~15% of full inventory survives
@@ -2297,7 +2297,7 @@ SCENARIOS = {
     # λ ≈ 5.2 breakthroughs/CSG → P_win ≈ 88 %
     # ------------------------------------------------------------------
     "us_win_ew_dominance": {
-        "label": "Scenario S -- US Wins: EW / Cyber Dominance [P_win ≈ 88%] (8 CSGs)",
+        "label": "Scenario 17 -- US Wins: EW / Cyber Dominance [P_win ≈ 88%] (8 CSGs)",
         "description": "",   # overridden dynamically
         "custom_sites":         ALL_SITES,
         "n_missiles":           450,                # precision-guided rounds denied; only ballistic survive
@@ -2323,7 +2323,7 @@ SCENARIOS = {
     # λ ≈ 5.8 breakthroughs/CSG → P_win ≈ 83 %
     # ------------------------------------------------------------------
     "us_win_allied_umbrella": {
-        "label": "Scenario T -- US Wins: Full Allied Missile-Defence Umbrella [P_win ≈ 83%] (8 CSGs)",
+        "label": "Scenario 18 -- US Wins: Full Allied Missile-Defence Umbrella [P_win ≈ 83%] (8 CSGs)",
         "description": "",   # overridden dynamically
         "custom_sites":         ALL_SITES,
         "n_missiles":           550,                # Iran launches full coastal salvo
@@ -2352,7 +2352,7 @@ SCENARIOS = {
     # λ ≈ 7.3 breakthroughs/CSG → P_win ≈ 71 %
     # ------------------------------------------------------------------
     "us_win_c2_disrupted": {
-        "label": "Scenario U -- US Wins: Iranian C2 / IADS Disrupted [P_win ≈ 71%] (8 CSGs)",
+        "label": "Scenario 13 -- US Wins: Iranian C2 / IADS Disrupted [P_win ≈ 71%] (8 CSGs)",
         "description": "",   # overridden dynamically
         "custom_sites":         ALL_SITES,
         "n_missiles":           900,                # all missiles fired but fragmented timing
@@ -2381,7 +2381,7 @@ SCENARIOS = {
     # λ ≈ 8.7 breakthroughs/CSG → P_win ≈ 65 %
     # ------------------------------------------------------------------
     "us_win_arsenal_attrition": {
-        "label": "Scenario V -- US Wins: Iranian Arsenal Attrited by Prior Conflict [P_win ≈ 65%] (8 CSGs)",
+        "label": "Scenario 14 -- US Wins: Iranian Arsenal Attrited by Prior Conflict [P_win ≈ 65%] (8 CSGs)",
         "description": "",   # overridden dynamically
         "custom_sites":         ALL_SITES,
         "n_missiles":           750,                # large count but legacy low-lethality rounds
@@ -2429,7 +2429,7 @@ SCENARIOS = {
     # λ ≈ 1.2 breakthroughs/CSG → P_win ≈ 99%+ (fleet essentially intact)
     # ------------------------------------------------------------------
     "one_percent_probe": {
-        "label": "Scenario Z -- 1% Inventory: Drone Probe → 60-min ISR Lull → Precision Follow-On (8 CSGs)",
+        "label": "Scenario 02 -- 1% Inventory: Drone Probe → 60-min ISR Lull → Precision Follow-On (8 CSGs)",
         "description": (
             "SITUATION: Iran has been reduced to approximately 1% of pre-crisis armament "
             "through a combination of sustained US/IAF pre-emptive strikes, prior conflict "
@@ -2533,7 +2533,7 @@ SCENARIOS = {
     # qualitative shift in Iranian capability — not raw inventory numbers.
     # ------------------------------------------------------------------
     "one_percent_fatah2": {
-        "label": "Scenario AA -- 1% Inventory + 10 Secured Fattah-2 HGVs: Drone Probe → ISR Lull → HGV Strike (8 CSGs)",
+        "label": "Scenario 05 -- 1% Inventory + 10 Secured Fattah-2 HGVs: Drone Probe → ISR Lull → HGV Strike (8 CSGs)",
         "description": (
             "SITUATION: Iran has been reduced to 1% of pre-crisis armament through sustained "
             "US/IAF strikes and prior-conflict attrition — identical depletion context to "
@@ -2633,7 +2633,7 @@ SCENARIOS = {
     # that cannot be destroyed by TLAM/JASSM without GBU-57 MOP (B-2 only).
     # Assumes ~5,000 Shahed cap + Emad/Zolfaghar from cave complexes.
     "caves": {
-        "label": "Scenario N -- Cave/Tunnel Network: 25 Dispersed Sites, 2-Hit Destruction (8 CSGs)",
+        "label": "Scenario 24 -- Cave/Tunnel Network: 25 Dispersed Sites, 2-Hit Destruction (8 CSGs)",
         "description": "",   # overridden dynamically
         "custom_sites":         CAVE_SITES,   # replace the 12 coastal sites
         "site_hits_to_destroy": 2,            # caves collapse with 2 precision hits
@@ -5412,6 +5412,16 @@ def generate_scenario(scenario_key, seed=42, out_dir=None):
         "iaf_cost": iaf_cost,
         "us_strike_cost": us_strike_cost,
         "us_intercept_cost": us_intercept_cost,
+        # Spec-required aliases for web UI result dict
+        "n_launched":            actual_launched,
+        "n_intercepted":         actual_intercepted,
+        "n_breakthrough":        actual_breakthrough,
+        "intercept_rate_actual": actual_intercepted / actual_launched if actual_launched else 0.0,
+        "duration_min":          dur_min,
+        "iran_cost_usd":         iran_cost,
+        "us_total_cost_usd":     total_us_cost,
+        "us_kia":                us_mil_kia,
+        "us_wia":                us_mil_wia,
     }
 
     # ── Per-CSG Battle Damage Assessment table ──────────────────────────────────
@@ -6286,7 +6296,7 @@ def _kml_color_to_rgb(kml_hex):
     return (128, 128, 128)
 
 
-def generate_legend_png(scenario_key, sc, costs, n_launched, n_int, n_bt, dur_min, out_dir):
+def generate_legend_png(scenario_key, sc, costs, n_launched, n_int, n_bt, dur_min, out_dir, rank=None):
     """
     Generate a standalone PNG legend card for a scenario.
     Saved to out_dir/legend_<scenario_key>.png.
@@ -6424,7 +6434,8 @@ def generate_legend_png(scenario_key, sc, costs, n_launched, n_int, n_bt, dur_mi
     y += PAD
 
     # ── Save ──────────────────────────────────────────────────────────────────
-    out_path = os.path.join(out_dir, f"legend_{scenario_key}.png")
+    stem = f"{rank:02d}_{scenario_key}" if rank is not None else scenario_key
+    out_path = os.path.join(out_dir, f"legend_{stem}.png")
     img.save(out_path, "PNG")
     return out_path
 
@@ -10326,23 +10337,45 @@ def main():
     stats = {}
     all_costs = {}
 
-    for scenario_key in ("low", "medium", "high", "realistic", "iran_best", "usa_best",
-                         "drone_first_low", "drone_first_medium", "drone_first_high",
-                         "coordinated_strike",
-                         "focused_salvo", "hypersonic_threat", "ballistic_barrage",
-                         "ascm_swarm", "shore_based_defense", "strait_transit", "caves",
-                         "depleted_drone_first", "depleted_coastal", "depleted_israel_split",
-                         "us_win_preemption", "us_win_ew_dominance", "us_win_allied_umbrella",
-                         "us_win_c2_disrupted", "us_win_arsenal_attrition",
-                         "one_percent_probe", "one_percent_fatah2",
-                         "ballistic_surge"):
+    # Ordered most-to-least realistic (01 = most grounded in current doctrine/inventory)
+    scenario_order = (
+        "realistic",           # 01
+        "one_percent_probe",   # 02
+        "depleted_drone_first",# 03
+        "depleted_coastal",    # 04
+        "one_percent_fatah2",  # 05
+        "depleted_israel_split",# 06
+        "medium",              # 07
+        "drone_first_low",     # 08
+        "hypersonic_threat",   # 09
+        "drone_first_medium",  # 10
+        "low",                 # 11
+        "ballistic_barrage",   # 12
+        "us_win_c2_disrupted", # 13
+        "us_win_arsenal_attrition", # 14
+        "usa_best",            # 15
+        "ascm_swarm",          # 16
+        "us_win_ew_dominance", # 17
+        "us_win_allied_umbrella", # 18
+        "us_win_preemption",   # 19
+        "high",                # 20
+        "shore_based_defense", # 21
+        "strait_transit",      # 22
+        "drone_first_high",    # 23
+        "caves",               # 24
+        "ballistic_surge",     # 25
+        "coordinated_strike",  # 26
+        "focused_salvo",       # 27
+        "iran_best",           # 28
+    )
+    for rank, scenario_key in enumerate(scenario_order, start=1):
         print(f"  Generating {scenario_key} ...")
         kml_content, legend_states, n_launched, n_intercepted, n_breakthrough, duration_min, costs = \
             generate_scenario(scenario_key, seed=seeds[scenario_key], out_dir=out)
 
         # ── Write per-scenario KMZ (KML + dynamic legend images bundled) ──────
         import zipfile as _zf
-        output_path = os.path.join(out, f"scenario_{scenario_key}.kmz")
+        output_path = os.path.join(out, f"scenario_{rank:02d}_{scenario_key}.kmz")
         with _zf.ZipFile(output_path, "w", _zf.ZIP_DEFLATED) as zf:
             zf.writestr("doc.kml", kml_content.encode("utf-8"))
             for img_path, _, _ in legend_states:
@@ -10353,7 +10386,7 @@ def main():
         scenario_config = SCENARIOS[scenario_key]
         stats[scenario_key] = (scenario_config["label"], n_launched, n_intercepted, n_breakthrough, duration_min)
         all_costs[scenario_key] = costs
-        png_path = generate_legend_png(scenario_key, scenario_config, costs, n_launched, n_intercepted, n_breakthrough, duration_min, out)
+        png_path = generate_legend_png(scenario_key, scenario_config, costs, n_launched, n_intercepted, n_breakthrough, duration_min, out, rank=rank)
         if png_path:
             print(f"    legend -> {png_path}")
 
@@ -10378,7 +10411,7 @@ def main():
     print(f"  Master -> {master}")
     # ── Summary KMZ ───────────────────────────────────────────────────────────
     # Use the "realistic" scenario legend as the representative legend image
-    legend_for_kmz = os.path.join(out, "legend_realistic.png")
+    legend_for_kmz = os.path.join(out, "legend_01_realistic.png")
     kmz_path = generate_summary_kmz(stats, all_costs, out, legend_for_kmz)
     print(f"  Summary KMZ -> {kmz_path}")
     html_files = generate_html_reports(stats, all_costs, out)

@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DAEMON — Wargame Simulation UI</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    darkMode: 'class',
+    theme: {
+      extend: {
+        colors: {
+          'terminal': '#0a0f0a',
+          'panel': '#0f1410',
+          'border': '#1e3a1e',
+          'accent': '#22c55e',
+          'amber-h': '#f59e0b',
+          'danger': '#ef4444',
+          'muted': '#4b5563',
+        }
+      }
+    }
+  }
+</script>
+<style>
+  * { box-sizing: border-box; }
+  body { background: #080d08; color: #d1fae5; font-family: 'Consolas', 'Monaco', monospace; }
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: #0a0f0a; }
+  ::-webkit-scrollbar-thumb { background: #1e3a1e; border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: #22c55e; }
+  .tab-active   { border-bottom: 2px solid #22c55e; color: #22c55e; }
+  .tab-inactive { border-bottom: 2px solid transparent; color: #4b5563; }
+  .tab-inactive:hover { color: #86efac; }
+  .tr-selected  { background: #0f2d1a !important; outline: 1px solid #22c55e; }
+  .tr-hover:hover { background: #0a1f10; cursor: pointer; }
+  input[type=number], input[type=text] {
+    background: #0a0f0a;
+    border: 1px solid #1e3a1e;
+    color: #d1fae5;
+    padding: 2px 6px;
+    border-radius: 3px;
+    width: 100%;
+    font-size: 0.75rem;
+  }
+  input[type=number]:focus, input[type=text]:focus {
+    outline: 1px solid #22c55e;
+    border-color: #22c55e;
+  }
+  .param-changed { border-color: #f59e0b !important; outline: 1px solid #f59e0b; }
+  .log-pre {
+    background: #020402;
+    border: 1px solid #1e3a1e;
+    border-radius: 4px;
+    padding: 8px;
+    font-size: 0.7rem;
+    line-height: 1.4;
+    height: 300px;
+    overflow-y: auto;
+    white-space: pre-wrap;
+    word-break: break-all;
+    color: #86efac;
+  }
+  .stat-card {
+    background: #0a0f0a;
+    border: 1px solid #1e3a1e;
+    border-radius: 4px;
+    padding: 10px;
+    font-size: 0.72rem;
+  }
+  .stat-val { color: #22c55e; font-weight: bold; }
+  .stat-bad { color: #ef4444; font-weight: bold; }
+  .stat-warn { color: #f59e0b; font-weight: bold; }
+  .btn-primary {
+    background: #14532d;
+    border: 1px solid #22c55e;
+    color: #22c55e;
+    padding: 5px 14px;
+    border-radius: 3px;
+    cursor: pointer;
+    font-size: 0.8rem;
+    transition: background 0.15s;
+  }
+  .btn-primary:hover { background: #166534; }
+  .btn-primary:disabled { opacity: 0.4; cursor: not-allowed; }
+  .btn-secondary {
+    background: #1c1f1c;
+    border: 1px solid #374151;
+    color: #9ca3af;
+    padding: 5px 14px;
+    border-radius: 3px;
+    cursor: pointer;
+    font-size: 0.8rem;
+    transition: background 0.15s;
+  }
+  .btn-secondary:hover { background: #262a26; }
+  .btn-amber {
+    background: #451a03;
+    border: 1px solid #f59e0b;
+    color: #f59e0b;
+    padding: 5px 14px;
+    border-radius: 3px;
+    cursor: pointer;
+    font-size: 0.8rem;
+    transition: background 0.15s;
+  }
+  .btn-amber:hover { background: #78350f; }
+  .sort-asc::after  { content: ' ▲'; opacity: 0.7; }
+  .sort-desc::after { content: ' ▼'; opacity: 0.7; }
+  .desc-cell { max-width: 0; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; cursor: pointer; }
+  .desc-cell.expanded { white-space: normal; word-break: break-word; overflow: visible; max-width: none; }
+  th { cursor: pointer; user-select: none; white-space: nowrap; }
+  th:hover { color: #22c55e; }
+  .panel { background: #0a0f0a; border-right: 1px solid #1e3a1e; overflow-y: auto; }
+  .section-title { font-size: 0.65rem; letter-spacing: 0.12em; text-transform: uppercase; color: #4b5563; margin-bottom: 6px; padding-bottom: 4px; border-bottom: 1px solid #1e3a1e; }
+  .compare-badge { background: #1e3a1e; color: #22c55e; font-size: 0.65rem; padding: 1px 6px; border-radius: 10px; margin-left: 6px; }
+</style>
+</head>
+<body class="flex flex-col h-screen overflow-hidden">
+
+<!-- Header -->
+<header class="flex items-center px-4 py-2 border-b border-green-900" style="background:#050d05">
+  <div class="text-green-400 font-bold text-sm tracking-widest mr-4">DAEMON</div>
+  <div class="text-green-700 text-xs">Persian Gulf Wargame Simulation</div>
+  <div class="ml-auto text-xs text-gray-600" id="status-bar">Ready</div>
+</header>
+
+<!-- Main three-panel layout -->
+<div class="flex flex-1 overflow-hidden">
+
+  <!-- LEFT PANEL: Scenario browser -->
+  <div class="panel flex flex-col" style="width:35%; min-width:320px;">
+    <div class="p-3 border-b border-green-900">
+      <div class="section-title">Scenario Library</div>
+      <!-- Tabs -->
+      <div class="flex gap-4 mt-1">
+        <button id="tab-kharg" class="tab-active text-xs pb-1" onclick="switchTab('kharg')">Kharg Island</button>
+        <button id="tab-csg"   class="tab-inactive text-xs pb-1" onclick="switchTab('csg')">CSG Naval</button>
+      </div>
+    </div>
+
+    <div class="flex-1 overflow-auto p-2">
+      <table class="w-full text-xs border-collapse" id="scenario-table">
+        <thead>
+          <tr class="text-green-700 text-left sticky top-0" style="background:#0a0f0a">
+            <th class="py-1 pr-2 w-8"  onclick="sortTable('rank')"  id="th-rank">Rank</th>
+            <th class="py-1 pr-2"      onclick="sortTable('label')" id="th-label">Label</th>
+            <th class="py-1"           onclick="sortTable('description')" id="th-desc">Description</th>
+          </tr>
+        </thead>
+        <tbody id="scenario-tbody">
+          <tr><td colspan="3" class="text-gray-600 py-4 text-center">Loading scenarios...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- MIDDLE PANEL: Parameter editor -->
+  <div class="panel flex flex-col border-r border-green-900" style="width:35%; min-width:300px;">
+    <div class="p-3 border-b border-green-900">
+      <div class="section-title">Parameter Editor</div>
+      <div id="selected-label" class="text-green-300 text-xs font-bold truncate mt-1">— no scenario selected —</div>
+      <div id="selected-engine" class="text-gray-600 text-xs mt-0.5"></div>
+    </div>
+
+    <div class="flex-1 overflow-auto p-3" id="param-editor">
+      <div class="text-gray-600 text-xs mt-4 text-center">Select a scenario to edit parameters.</div>
+    </div>
+
+    <!-- Action buttons -->
+    <div class="p-3 border-t border-green-900 flex flex-col gap-2">
+      <div class="flex gap-2">
+        <button class="btn-primary flex-1" id="btn-run" onclick="runScenario()" disabled>Run Scenario</button>
+        <button class="btn-secondary" id="btn-reset" onclick="resetParams()">Reset</button>
+      </div>
+      <div class="flex items-center gap-2">
+        <button class="btn-amber flex-1" id="btn-compare" onclick="addToCompare()" disabled>
+          Add to Compare
+          <span class="compare-badge" id="compare-count">0/2</span>
+        </button>
+        <button class="btn-secondary text-xs" id="btn-clear-compare" onclick="clearCompare()">Clear</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- RIGHT PANEL: Run output & results -->
+  <div class="flex flex-col flex-1 overflow-hidden" style="background:#080d08">
+    <div class="p-3 border-b border-green-900">
+      <div class="section-title">Run Output</div>
+    </div>
+    <div class="flex-1 overflow-auto p-3 flex flex-col gap-3">
+
+      <!-- Terminal log -->
+      <div>
+        <div class="text-gray-600 text-xs mb-1">STDOUT LOG</div>
+        <pre class="log-pre" id="log-output">Waiting for run...</pre>
+      </div>
+
+      <!-- Run controls / download -->
+      <div class="flex items-center gap-3" id="run-status-row">
+        <span id="run-status-text" class="text-xs text-gray-500">No run yet.</span>
+        <a id="btn-download" class="btn-primary hidden" href="#" download>Download KMZ</a>
+      </div>
+
+      <!-- Stats card -->
+      <div id="stats-card" class="hidden">
+        <div class="text-gray-600 text-xs mb-1">BATTLE STATISTICS</div>
+        <div class="stat-card" id="stats-content"></div>
+      </div>
+
+      <!-- Comparison table -->
+      <div id="compare-section" class="hidden">
+        <div class="text-gray-600 text-xs mb-1">SCENARIO COMPARISON</div>
+        <div class="stat-card overflow-x-auto" id="compare-content"></div>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+<script>
+// ─────────────────────────────────────────────────────────
+// State
+// ─────────────────────────────────────────────────────────
+let allScenarios = [];
+// Point at FastAPI regardless of which port this HTML is served from
+const API_BASE = 'http://localhost:8000';
+
+let currentTab   = 'kharg';
+let sortCol      = 'rank';
+let sortDir      = 'asc';
+let selectedSc   = null;   // full scenario object
+let editedParams = {};     // user-modified param values
+let currentJobId = null;
+let currentSse   = null;
+
+let compareSlots = [null, null];  // up to 2 results: {label, result, jobId}
+
+// ─────────────────────────────────────────────────────────
+// Boot
+// ─────────────────────────────────────────────────────────
+async function boot() {
+  setStatus('Fetching scenarios...');
+  try {
+    const res = await fetch(`${API_BASE}/api/scenarios`);
+    allScenarios = await res.json();
+    setStatus(`Loaded ${allScenarios.length} scenarios`);
+    renderTable();
+  } catch(e) {
+    setStatus('ERROR: ' + e.message);
+  }
+}
+
+// ─────────────────────────────────────────────────────────
+// Tab
+// ─────────────────────────────────────────────────────────
+function switchTab(tab) {
+  currentTab = tab;
+  document.getElementById('tab-kharg').className = tab === 'kharg' ? 'tab-active text-xs pb-1' : 'tab-inactive text-xs pb-1';
+  document.getElementById('tab-csg').className   = tab === 'csg'   ? 'tab-active text-xs pb-1' : 'tab-inactive text-xs pb-1';
+  sortCol = 'rank'; sortDir = 'asc';
+  renderTable();
+}
+
+// ─────────────────────────────────────────────────────────
+// Table rendering & sorting
+// ─────────────────────────────────────────────────────────
+function sortTable(col) {
+  if (sortCol === col) sortDir = sortDir === 'asc' ? 'desc' : 'asc';
+  else { sortCol = col; sortDir = 'asc'; }
+  renderTable();
+}
+
+function renderTable() {
+  const rows = allScenarios.filter(s => s.engine === currentTab);
+
+  rows.sort((a, b) => {
+    let av = a[sortCol], bv = b[sortCol];
+    if (typeof av === 'string') av = av.toLowerCase();
+    if (typeof bv === 'string') bv = bv.toLowerCase();
+    if (av < bv) return sortDir === 'asc' ? -1 : 1;
+    if (av > bv) return sortDir === 'asc' ? 1 : -1;
+    return 0;
+  });
+
+  // Update header sort indicators
+  ['rank','label','description'].forEach(c => {
+    const th = document.getElementById('th-' + (c === 'description' ? 'desc' : c));
+    if (!th) return;
+    th.className = 'py-1 pr-2' + (sortCol === c ? (sortDir === 'asc' ? ' sort-asc' : ' sort-desc') : '');
+  });
+
+  const tbody = document.getElementById('scenario-tbody');
+  if (rows.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="3" class="text-gray-600 py-4 text-center">No scenarios.</td></tr>';
+    return;
+  }
+
+  tbody.innerHTML = rows.map(s => {
+    const isSelected = selectedSc && selectedSc.id === s.id && selectedSc.engine === s.engine;
+    const desc80 = s.description.length > 80 ? s.description.slice(0, 80) + '…' : s.description;
+    return `<tr class="tr-hover border-b border-green-900 border-opacity-30 ${isSelected ? 'tr-selected' : ''}"
+               onclick="selectScenario('${s.id}','${s.engine}')" data-id="${s.id}" data-engine="${s.engine}">
+      <td class="py-1 pr-2 text-green-700 tabular-nums">${s.rank}</td>
+      <td class="py-1 pr-2 text-green-200 leading-snug">${escHtml(s.label)}</td>
+      <td class="py-1 desc-cell text-gray-500" title="${escHtml(s.description)}"
+          onclick="toggleDesc(event, this)">${escHtml(desc80)}</td>
+    </tr>`;
+  }).join('');
+}
+
+function toggleDesc(ev, cell) {
+  ev.stopPropagation();
+  const row = cell.closest('tr');
+  const sc  = allScenarios.find(s => s.id === row.dataset.id && s.engine === row.dataset.engine);
+  if (!sc) return;
+  if (cell.classList.contains('expanded')) {
+    cell.classList.remove('expanded');
+    const d = sc.description;
+    cell.textContent = d.length > 80 ? d.slice(0, 80) + '…' : d;
+  } else {
+    cell.classList.add('expanded');
+    cell.textContent = sc.description;
+  }
+}
+
+// ─────────────────────────────────────────────────────────
+// Scenario selection & param editor
+// ─────────────────────────────────────────────────────────
+function selectScenario(id, engine) {
+  selectedSc = allScenarios.find(s => s.id === id && s.engine === engine);
+  if (!selectedSc) return;
+  editedParams = {};
+  document.getElementById('selected-label').textContent  = selectedSc.label;
+  document.getElementById('selected-engine').textContent = engine === 'kharg' ? 'Engine: Kharg Island' : 'Engine: CSG Naval';
+  document.getElementById('btn-run').disabled = false;
+  document.getElementById('btn-compare').disabled = false;
+  renderParams();
+  renderTable();  // re-highlight selected row
+}
+
+function snakeToTitle(s) {
+  return s.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+}
+
+function renderParams() {
+  if (!selectedSc) return;
+  const params = selectedSc.params;
+  const editor = document.getElementById('param-editor');
+  let html = '<table class="w-full text-xs border-collapse">';
+  html += '<thead><tr class="text-green-700"><th class="py-0.5 pr-2 text-left w-40">Parameter</th><th class="py-0.5 text-left">Value</th></tr></thead><tbody>';
+
+  for (const [k, v] of Object.entries(params)) {
+    const isFloat = !Number.isInteger(v) && typeof v === 'number';
+    const display = isFloat ? v.toFixed(4) : String(v);
+    const isChanged = editedParams.hasOwnProperty(k);
+    const curVal = isChanged ? editedParams[k] : display;
+    const inputType = typeof v === 'boolean' ? 'checkbox' : (typeof v === 'number' ? 'number' : 'text');
+    const step = isFloat ? '0.0001' : '1';
+    const inputId = `p_${k}`;
+
+    if (typeof v === 'boolean') {
+      html += `<tr class="border-b border-green-900 border-opacity-20">
+        <td class="py-0.5 pr-2 text-gray-400">${snakeToTitle(k)}</td>
+        <td class="py-0.5">
+          <input type="checkbox" id="${inputId}" ${v ? 'checked' : ''}
+            onchange="paramChanged('${k}', this.checked)"
+            class="${isChanged ? 'accent-amber-400' : 'accent-green-500'}">
+        </td></tr>`;
+    } else {
+      html += `<tr class="border-b border-green-900 border-opacity-20">
+        <td class="py-0.5 pr-2 text-gray-400">${snakeToTitle(k)}</td>
+        <td class="py-0.5">
+          <input type="${inputType}" id="${inputId}" value="${curVal}"
+            step="${step}" placeholder="${display}"
+            oninput="paramChanged('${k}', this.value)"
+            class="${isChanged ? 'param-changed' : ''}">
+        </td></tr>`;
+    }
+  }
+  html += '</tbody></table>';
+  editor.innerHTML = html;
+}
+
+function paramChanged(key, rawVal) {
+  if (!selectedSc) return;
+  const original = selectedSc.params[key];
+  let val = rawVal;
+
+  if (typeof original === 'boolean') {
+    val = Boolean(rawVal);
+  } else if (typeof original === 'number') {
+    val = Number(rawVal);
+  }
+
+  // Mark as changed only if different from original
+  const origDisplay = typeof original === 'number' && !Number.isInteger(original)
+    ? original.toFixed(4) : String(original);
+
+  if (String(val) === String(origDisplay) || val === original) {
+    delete editedParams[key];
+  } else {
+    editedParams[key] = val;
+  }
+
+  // Highlight the input
+  const el = document.getElementById(`p_${key}`);
+  if (el && el.type !== 'checkbox') {
+    if (editedParams.hasOwnProperty(key)) {
+      el.classList.add('param-changed');
+    } else {
+      el.classList.remove('param-changed');
+    }
+  }
+}
+
+function resetParams() {
+  editedParams = {};
+  if (selectedSc) renderParams();
+}
+
+// ─────────────────────────────────────────────────────────
+// Run scenario
+// ─────────────────────────────────────────────────────────
+async function runScenario() {
+  if (!selectedSc) return;
+
+  // Reset output panel
+  const logPre = document.getElementById('log-output');
+  logPre.textContent = '';
+  document.getElementById('stats-card').classList.add('hidden');
+  document.getElementById('btn-download').classList.add('hidden');
+  document.getElementById('run-status-text').textContent = 'Starting...';
+
+  // Cancel any existing SSE
+  if (currentSse) { currentSse.close(); currentSse = null; }
+
+  const body = {
+    id:     selectedSc.id,
+    engine: selectedSc.engine,
+    params: editedParams,
+  };
+
+  setStatus(`Running ${selectedSc.label}...`);
+  document.getElementById('btn-run').disabled = true;
+
+  try {
+    const res  = await fetch(`${API_BASE}/api/run`, {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify(body),
+    });
+    const data = await res.json();
+    currentJobId = data.job_id;
+    document.getElementById('run-status-text').textContent = `Job ${currentJobId.slice(0,8)}… running`;
+
+    // Open SSE stream
+    currentSse = new EventSource(`${API_BASE}/api/stream/${currentJobId}`);
+    currentSse.onmessage = (e) => {
+      const msg = e.data;
+      if (msg === '__DONE__') {
+        currentSse.close(); currentSse = null;
+        onRunDone(currentJobId);
+      } else if (msg.startsWith('__ERROR__:')) {
+        logPre.textContent += '\n[ERROR] ' + msg.slice(10);
+        logPre.scrollTop = logPre.scrollHeight;
+        document.getElementById('run-status-text').textContent = 'Run failed.';
+        setStatus('Run failed');
+        document.getElementById('btn-run').disabled = false;
+        currentSse.close(); currentSse = null;
+      } else {
+        logPre.textContent += msg + '\n';
+        logPre.scrollTop = logPre.scrollHeight;
+      }
+    };
+    currentSse.onerror = () => {
+      logPre.textContent += '\n[SSE connection closed]\n';
+      logPre.scrollTop = logPre.scrollHeight;
+      document.getElementById('btn-run').disabled = false;
+    };
+  } catch(err) {
+    document.getElementById('run-status-text').textContent = 'Error: ' + err.message;
+    setStatus('Error: ' + err.message);
+    document.getElementById('btn-run').disabled = false;
+  }
+}
+
+async function onRunDone(jobId) {
+  document.getElementById('run-status-text').textContent = 'Run complete.';
+  document.getElementById('btn-run').disabled = false;
+  setStatus('Run complete');
+
+  // Show download button
+  const dlBtn = document.getElementById('btn-download');
+  dlBtn.href = `/api/download/${jobId}`;
+  dlBtn.classList.remove('hidden');
+
+  // Fetch results
+  try {
+    const res    = await fetch(`${API_BASE}/api/results/${jobId}`);
+    const result = await res.json();
+    renderStats(result);
+
+    // Store for compare
+    compareSlots[2] = {
+      label:  selectedSc ? selectedSc.label : jobId,
+      result: result,
+      jobId:  jobId,
+    };
+  } catch(e) {
+    console.warn('Could not fetch results:', e);
+  }
+}
+
+// ─────────────────────────────────────────────────────────
+// Stats card rendering
+// ─────────────────────────────────────────────────────────
+function renderStats(r) {
+  const card    = document.getElementById('stats-card');
+  const content = document.getElementById('stats-content');
+  card.classList.remove('hidden');
+
+  // Detect engine from keys
+  const isKharg = r.hasOwnProperty('marines_alive');
+
+  let rows = [];
+  if (isKharg) {
+    const outcomeClass = r.outcome === 'USMC secured' ? 'stat-val' : (r.outcome === 'IRGC repelled' ? 'stat-bad' : 'stat-warn');
+    rows = [
+      ['Outcome', `<span class="${outcomeClass}">${escHtml(r.outcome)}</span>`],
+      ['Marines Alive',    `<span class="stat-val">${r.marines_alive}</span> / ${r.marines_total}`],
+      ['IRGC Neutralized', `<span class="stat-val">${r.irgc_neutralized}</span> / ${r.irgc_total}`],
+      ['Ospreys Lost',     r.ospreys_lost > 0 ? `<span class="stat-bad">${r.ospreys_lost}</span> / ${r.ospreys_total}` : `<span class="stat-val">0</span> / ${r.ospreys_total}`],
+      ['Drone Kills',      `<span class="stat-val">${r.drone_kills}</span>`],
+      ['Ship Hits',        r.ship_hits > 0 ? `<span class="stat-bad">${r.ship_hits}</span>` : `<span class="stat-val">0</span>`],
+      ['Stinger Kills',    r.stinger_kills > 0 ? `<span class="stat-warn">${r.stinger_kills}</span>` : `<span class="stat-val">0</span>`],
+      ['Sunk Ships',       r.sunk_ships && r.sunk_ships.length > 0 ? `<span class="stat-bad">${r.sunk_ships.join(', ')}</span>` : '<span class="stat-val">none</span>'],
+    ];
+  } else {
+    const ir = (r.intercept_rate_actual * 100).toFixed(1);
+    const iClass = r.intercept_rate_actual >= 0.7 ? 'stat-val' : (r.intercept_rate_actual >= 0.4 ? 'stat-warn' : 'stat-bad');
+    rows = [
+      ['Launched',          `<span class="stat-val">${(r.n_launched||0).toLocaleString()}</span>`],
+      ['Intercepted',       `<span class="${iClass}">${(r.n_intercepted||0).toLocaleString()}</span>`],
+      ['Breakthrough',      r.n_breakthrough > 500 ? `<span class="stat-bad">${(r.n_breakthrough||0).toLocaleString()}</span>` : `<span class="stat-warn">${(r.n_breakthrough||0).toLocaleString()}</span>`],
+      ['Intercept Rate',    `<span class="${iClass}">${ir}%</span>`],
+      ['Duration',          `<span class="stat-val">${(r.duration_min||0).toFixed(0)} min</span>`],
+      ['Iran Cost',         `<span class="stat-warn">${fmtUsd(r.iran_cost_usd)}</span>`],
+      ['US Total Cost',     `<span class="stat-bad">${fmtUsd(r.us_total_cost_usd)}</span>`],
+      ['Exchange Ratio',    `<span class="${r.exchange_ratio > 5 ? 'stat-bad' : 'stat-warn'}">${(r.exchange_ratio||0).toFixed(1)}:1</span>`],
+      ['US KIA',            r.us_kia > 100 ? `<span class="stat-bad">${(r.us_kia||0).toLocaleString()}</span>` : `<span class="stat-warn">${(r.us_kia||0).toLocaleString()}</span>`],
+      ['US WIA',            r.us_wia > 200 ? `<span class="stat-bad">${(r.us_wia||0).toLocaleString()}</span>` : `<span class="stat-warn">${(r.us_wia||0).toLocaleString()}</span>`],
+    ];
+  }
+
+  content.innerHTML = '<table class="w-full text-xs border-collapse">' +
+    rows.map(([k,v]) =>
+      `<tr class="border-b border-green-900 border-opacity-20">
+        <td class="py-0.5 pr-3 text-gray-400 w-36">${k}</td>
+        <td class="py-0.5">${v}</td>
+      </tr>`
+    ).join('') + '</table>';
+}
+
+function fmtUsd(v) {
+  if (!v) return '$0';
+  if (v >= 1e9) return '$' + (v/1e9).toFixed(2) + 'B';
+  if (v >= 1e6) return '$' + (v/1e6).toFixed(1) + 'M';
+  return '$' + Math.round(v).toLocaleString();
+}
+
+// ─────────────────────────────────────────────────────────
+// Compare
+// ─────────────────────────────────────────────────────────
+function addToCompare() {
+  if (!compareSlots[2]) {
+    alert('Run a scenario first to get results for comparison.');
+    return;
+  }
+
+  // Shift: slot1 = slot2, then put latest in slot2
+  if (!compareSlots[0]) {
+    compareSlots[0] = compareSlots[2];
+  } else if (!compareSlots[1]) {
+    compareSlots[1] = compareSlots[2];
+  } else {
+    compareSlots[0] = compareSlots[1];
+    compareSlots[1] = compareSlots[2];
+  }
+  compareSlots[2] = null;
+
+  updateCompareCount();
+
+  if (compareSlots[0] && compareSlots[1]) {
+    renderCompare();
+  }
+}
+
+function clearCompare() {
+  compareSlots = [null, null];
+  compareSlots[2] = null;
+  updateCompareCount();
+  document.getElementById('compare-section').classList.add('hidden');
+}
+
+function updateCompareCount() {
+  const n = (compareSlots[0] ? 1 : 0) + (compareSlots[1] ? 1 : 0);
+  document.getElementById('compare-count').textContent = n + '/2';
+}
+
+function renderCompare() {
+  const s1 = compareSlots[0];
+  const s2 = compareSlots[1];
+  if (!s1 || !s2) return;
+
+  const r1 = s1.result, r2 = s2.result;
+  const isKharg = r1.hasOwnProperty('marines_alive');
+
+  let metricDefs;
+  if (isKharg) {
+    metricDefs = [
+      ['Outcome',          r => r.outcome],
+      ['Marines Alive',    r => `${r.marines_alive} / ${r.marines_total}`],
+      ['IRGC Neutralized', r => `${r.irgc_neutralized} / ${r.irgc_total}`],
+      ['Ospreys Lost',     r => `${r.ospreys_lost} / ${r.ospreys_total}`],
+      ['Drone Kills',      r => r.drone_kills],
+      ['Ship Hits',        r => r.ship_hits],
+      ['Stinger Kills',    r => r.stinger_kills],
+      ['Sunk Ships',       r => (r.sunk_ships||[]).join(', ') || 'none'],
+    ];
+  } else {
+    metricDefs = [
+      ['Launched',         r => (r.n_launched||0).toLocaleString()],
+      ['Intercepted',      r => (r.n_intercepted||0).toLocaleString()],
+      ['Breakthrough',     r => (r.n_breakthrough||0).toLocaleString()],
+      ['Intercept Rate',   r => ((r.intercept_rate_actual||0)*100).toFixed(1)+'%'],
+      ['Duration (min)',   r => (r.duration_min||0).toFixed(0)],
+      ['Iran Cost',        r => fmtUsd(r.iran_cost_usd)],
+      ['US Total Cost',    r => fmtUsd(r.us_total_cost_usd)],
+      ['Exchange Ratio',   r => (r.exchange_ratio||0).toFixed(1)+':1'],
+      ['US KIA',           r => (r.us_kia||0).toLocaleString()],
+      ['US WIA',           r => (r.us_wia||0).toLocaleString()],
+    ];
+  }
+
+  const section = document.getElementById('compare-section');
+  const content = document.getElementById('compare-content');
+  section.classList.remove('hidden');
+
+  const maxLabel = 28;
+  content.innerHTML = `
+    <table class="w-full text-xs border-collapse">
+      <thead>
+        <tr class="text-green-700">
+          <th class="py-0.5 pr-2 text-left w-32">Metric</th>
+          <th class="py-0.5 pr-2 text-left" title="${escHtml(s1.label)}">${escHtml(s1.label.length > maxLabel ? s1.label.slice(0,maxLabel)+'…' : s1.label)}</th>
+          <th class="py-0.5 text-left" title="${escHtml(s2.label)}">${escHtml(s2.label.length > maxLabel ? s2.label.slice(0,maxLabel)+'…' : s2.label)}</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${metricDefs.map(([label, fn]) => `
+          <tr class="border-b border-green-900 border-opacity-20">
+            <td class="py-0.5 pr-2 text-gray-400">${label}</td>
+            <td class="py-0.5 pr-2 text-green-200">${escHtml(String(fn(r1)))}</td>
+            <td class="py-0.5 text-green-200">${escHtml(String(fn(r2)))}</td>
+          </tr>`).join('')}
+      </tbody>
+    </table>`;
+}
+
+// ─────────────────────────────────────────────────────────
+// Utilities
+// ─────────────────────────────────────────────────────────
+function setStatus(msg) {
+  document.getElementById('status-bar').textContent = msg;
+}
+
+function escHtml(str) {
+  return String(str)
+    .replace(/&/g,'&amp;')
+    .replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;')
+    .replace(/'/g,'&#39;');
+}
+
+// ─────────────────────────────────────────────────────────
+// Init
+// ─────────────────────────────────────────────────────────
+boot();
+</script>
+</body>
+</html>

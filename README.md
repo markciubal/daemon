@@ -28,23 +28,40 @@ cd daemon
 pip install -e .
 ```
 
-Done.
+---
+
+## WEB UI (recommended)
+
+The easiest way to run DAEMON. Browse all scenarios, edit parameters, watch the simulation stream live, then open the output in Google Earth.
+
+```bash
+pip install fastapi "uvicorn[standard]"
+python server.py
+```
+
+Open **http://localhost:8000** in your browser.
+
+**What you can do:**
+- Browse all 32 Kharg Island and 28 CSG Naval scenarios in a sortable table, ordered by realism rank
+- Click any scenario to edit its parameters before running
+- Hit **Run Scenario** — output streams live to the terminal panel
+- Download the `.kmz` when the run finishes, or compare two runs side by side
 
 ---
 
-## RUN
+## COMMAND LINE
 
 ```bash
-# All 30 Kharg Island scenarios (~5 min)
+# All 32 Kharg Island scenarios (~5 min)
 python -m daemon.KHARG_ISLAND
 
-# All 30 CSG naval scenarios (~5 min)
+# All 28 CSG naval scenarios (~5 min)
 python -m daemon.CSG_SIM
 
-# Everything (60 scenarios, ~10 min)
+# Everything (~10 min)
 python -m daemon.ALL
 
-# Filter to one type
+# Filter by name fragment
 python -m daemon.KHARG_ISLAND f35
 python -m daemon.KHARG_ISLAND baseline
 ```
@@ -53,11 +70,11 @@ Output goes to `output/scenarios/`.
 
 ---
 
-## VIEW
+## VIEW IN GOOGLE EARTH
 
 1. Open **Google Earth Pro**
 2. **File → Open** → pick any `.kmz` from `output/scenarios/`
-3. In the layers side menu, double click on the generated "Battle Tour" and adjust the timeline with the slider at the bottom left once it starts playing.
+3. In the layers side menu, double-click the generated "Battle Tour" and adjust the timeline with the slider at the bottom left once it starts playing.
 4. Click any unit for its data card
 
 Left panel folders toggle layers on/off. Start with everything off, enable one group at a time.
@@ -144,9 +161,9 @@ Electronic warfare cuts both ways. Full DIRCM (AN/AAQ-24) knocks MANPADS effecti
 
 The naval scenarios are about magazines. The US Navy defends with SM-6 ($4.5M per round) against Shahed-136 drones ($35,000 each). Every Shahed that forces a SM-6 launch costs Iran $35,000 and costs the US $4,500,000. That is a 129:1 cost exchange in Iran's favor before accounting for any missile that gets through.
 
-The UAS-saturation doctrine makes this explicit: send cheap drones first to drain CIWS and RAM magazines, then send the SRBMs when the close-in defense is Winchester. Scenarios G, H, and I model this in sequence. By Scenario I (2,665 drones followed by 1,100 SRBMs), Aegis is overwhelmed and multiple carriers take mission-kill hits.
+The UAS-saturation doctrine makes this explicit: send cheap drones first to drain CIWS and RAM magazines, then send the SRBMs when the close-in defense is Winchester. The Drone-First scenarios (#08, #10, #23) model this in sequence. By #23 (2,665 drones followed by 1,100 SRBMs), Aegis is overwhelmed and multiple carriers take mission-kill hits.
 
-The fleet's total value at risk in a full CSG engagement is approximately $170 billion in hulls and air wings, defended by roughly 480 SM-6 rounds spread across all ships. Iran needs to get through with fewer than 480 missiles total to exhaust the magazine. In Scenario E (Iran Best Case), they launch 5,400 systems. The intercept rate is 37%. 3,419 leakers reach their targets.
+The fleet's total value at risk in a full CSG engagement is approximately $170 billion in hulls and air wings, defended by roughly 480 SM-6 rounds spread across all ships. Iran needs to get through with fewer than 480 missiles total to exhaust the magazine. In Scenario #28 (Iran Best Case), they launch 5,400 systems. The intercept rate is 37%. 3,419 leakers reach their targets.
 
 ### The AI Drone Factor
 
@@ -175,3 +192,17 @@ None of this predicts what will happen. It maps the terrain around what is possi
 - JP 3-02 *Amphibious Operations* (2019)
 - Dupuy Institute — combat effectiveness values
 - DoD FY2023/2025 budget exhibits — intercept system unit costs
+
+---
+
+## API (for scripting)
+
+The web server exposes a REST API if you want to drive runs programmatically:
+
+| Method | Path | Description |
+|--------|------|-------------|
+| GET | `/api/scenarios` | JSON list of all scenarios with params |
+| POST | `/api/run` | Start a run; body: `{"id", "engine", "params"}` |
+| GET | `/api/stream/{job_id}` | SSE stream of stdout lines |
+| GET | `/api/results/{job_id}` | Structured result dict |
+| GET | `/api/download/{job_id}` | KMZ file download |
