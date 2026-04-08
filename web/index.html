@@ -358,9 +358,36 @@ input[type=range] { accent-color:#22c55e; width:100%; height:4px; }
 
 <script>
 // ═══════════════════════════════════════════════════════════════
+// WORKER SETUP
+// ═══════════════════════════════════════════════════════════════
+const worker = new Worker('./worker.js');
+
+// Pending run resolvers: keyed by 'csg' | 'kharg'
+const _pending = {};
+
+worker.onmessage = (e) => {
+  const { type, which, ...data } = e.data;
+  if      (type === 'status')  setStatus(data.msg);
+  else if (type === 'log')     appendLog(data.which, data.line);
+  else if (type === 'ready')   onWorkerReady(data.scenarios);
+  else if (type === 'done')    { _pending[which]?.resolve(data); delete _pending[which]; }
+  else if (type === 'error')   {
+    if (which && _pending[which]) { _pending[which].reject(new Error(data.msg)); delete _pending[which]; }
+    else { setStatus('ERROR: ' + data.msg); if (which) setDot(which, 'error'); }
+  }
+};
+worker.onerror = (e) => setStatus('Worker error: ' + e.message);
+
+function workerRun(which, sc, edits) {
+  return new Promise((resolve, reject) => {
+    _pending[which] = { resolve, reject };
+    worker.postMessage({ type: 'run', which, id: sc.id, params: edits });
+  });
+}
+
+// ═══════════════════════════════════════════════════════════════
 // CONSTANTS
 // ═══════════════════════════════════════════════════════════════
-const API_BASE = 'http://localhost:8000';
 
 const PRESETS = [
   { name:'Baseline',      csg:'realistic',          kharg:'kharg_06_baseline_fim92_stinger_250opfor',
@@ -464,23 +491,19 @@ let jobs = { csg: null, kharg: null };
 let runHistory = [];  // array of { ts, csgLabel, khargLabel, csgResult, khargResult, csgJobId, khargJobId }
 
 // ═══════════════════════════════════════════════════════════════
-// BOOT
+// BOOT — delegate entirely to the Pyodide worker
 // ═══════════════════════════════════════════════════════════════
-async function boot() {
-  setStatus('Fetching scenarios…');
-  try {
-    const res = await fetch(`${API_BASE}/api/scenarios`);
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    allScenarios = await res.json();
-    setStatus(`Loaded ${allScenarios.length} scenarios`);
-    renderPresetsBar();
-    renderCSGTable();
-    renderKhargTable();
-  } catch(e) {
-    setStatus('ERROR: ' + e.message);
-    document.getElementById('csg-tbody').innerHTML =
-      `<tr><td colspan="2" style="color:#ef4444;padding:8px">Failed to load: ${escHtml(e.message)}</td></tr>`;
-  }
+function boot() {
+  setStatus('Starting Python runtime… (first load ~20 s, cached after)');
+  worker.postMessage({ type: 'init' });
+}
+
+function onWorkerReady(scenarios) {
+  allScenarios = scenarios;
+  setStatus(`Ready — ${allScenarios.length} scenarios loaded`);
+  renderPresetsBar();
+  renderCSGTable();
+  renderKhargTable();
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -781,12 +804,11 @@ async function runCampaign() {
   if (!selectedCSG || !selectedKharg) return;
   clearCampaignResults();
   document.getElementById('campaign-idle').style.display = 'none';
-  switchResultTab('campaign');
-  // Run both in parallel
-  await Promise.all([
-    startJob('csg',   selectedCSG,   csgEdits),
-    startJob('kharg', selectedKharg, khargEdits),
-  ]);
+  switchResultTab('log');
+
+  // Sequential: CSG first, then Kharg (single worker — can't parallelise)
+  await startJob('csg',   selectedCSG,   csgEdits);
+  await startJob('kharg', selectedKharg, khargEdits);
 }
 
 async function runSingle(which) {
@@ -795,90 +817,55 @@ async function runSingle(which) {
   if (!sc) return;
   clearJobResults(which);
   document.getElementById('campaign-idle').style.display = 'none';
-  switchResultTab('campaign');
+  switchResultTab('log');
   await startJob(which, sc, edits);
 }
 
 async function startJob(which, sc, edits) {
   setDot(which, 'running');
   setStatus(`Running ${which.toUpperCase()}: ${sc.label.slice(0,40)}…`);
+  document.getElementById(`log-${which}`).textContent = '';
+  switchLogTab(which);
 
-  // Clear old log
-  const logEl = document.getElementById(`log-${which}`);
-  logEl.textContent = '';
+  jobs[which] = { status: 'running', label: sc.label, engine: sc.engine, kmzBlobUrl: null };
 
   try {
-    const res = await fetch(`${API_BASE}/api/run`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ id: sc.id, engine: sc.engine, params: edits }),
-    });
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    const { job_id } = await res.json();
-
-    jobs[which] = { jobId: job_id, status: 'running', label: sc.label, engine: sc.engine };
-
-    openStream(which, job_id);
-  } catch(e) {
+    const { result, kmzBytes } = await workerRun(which, sc, edits);
+    onJobDone(which, result, kmzBytes);
+  } catch(err) {
     setDot(which, 'error');
-    setStatus(`Error starting ${which}: ` + e.message);
+    appendLog(which, '[ERROR] ' + err.message);
+    setStatus(`${which.toUpperCase()} run failed: ` + err.message);
+    if (jobs[which]) jobs[which].status = 'error';
   }
 }
 
-function openStream(which, jobId) {
-  const logEl = document.getElementById(`log-${which}`);
-  const sse = new EventSource(`${API_BASE}/api/stream/${jobId}`);
-
-  sse.onmessage = (e) => {
-    const msg = e.data;
-    if (msg === '__DONE__') {
-      sse.close();
-      onJobDone(which, jobId);
-    } else if (msg.startsWith('__ERROR__:')) {
-      logEl.textContent += '\n[ERROR] ' + msg.slice(10) + '\n';
-      logEl.scrollTop = logEl.scrollHeight;
-      setDot(which, 'error');
-      sse.close();
-      setStatus(`${which.toUpperCase()} run failed`);
-    } else {
-      logEl.textContent += msg + '\n';
-      logEl.scrollTop = logEl.scrollHeight;
-    }
-  };
-  sse.onerror = () => {
-    sse.close();
-    setDot(which, 'error');
-  };
-}
-
-async function onJobDone(which, jobId) {
+function onJobDone(which, result, kmzBytes) {
   setDot(which, 'done');
-  if (jobs[which]) jobs[which].status = 'done';
-  setStatus(`${which.toUpperCase()} run complete`);
+  if (jobs[which]) { jobs[which].status = 'done'; jobs[which].result = result; }
+  setStatus(`${which.toUpperCase()} complete`);
+  switchResultTab('campaign');
 
-  // Show download button
-  const dlBtn = document.getElementById(`btn-dl-${which}`);
-  dlBtn.href = `${API_BASE}/api/download/${jobId}`;
+  // Revoke old blob URL if present
+  if (jobs[which] && jobs[which].kmzBlobUrl) URL.revokeObjectURL(jobs[which].kmzBlobUrl);
+
+  // Create Blob URL for local download (no server round-trip needed)
+  const blob    = new Blob([kmzBytes], { type: 'application/vnd.google-earth.kmz' });
+  const blobUrl = URL.createObjectURL(blob);
+  if (jobs[which]) jobs[which].kmzBlobUrl = blobUrl;
+
+  const dlBtn    = document.getElementById(`btn-dl-${which}`);
+  dlBtn.href     = blobUrl;
+  dlBtn.download = `daemon_${which}_${jobs[which]?.label?.replace(/\s+/g,'_').slice(0,40) ?? which}.kmz`;
   dlBtn.style.display = '';
 
-  // Fetch result
-  try {
-    const res    = await fetch(`${API_BASE}/api/results/${jobId}`);
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    const result = await res.json();
-    if (jobs[which]) jobs[which].result = result;
+  renderStatsCard(which, result);
 
-    // Render stats card
-    renderStatsCard(which, result);
-
-    // Check if campaign is complete
-    if (jobs.csg && jobs.csg.status === 'done' &&
-        jobs.kharg && jobs.kharg.status === 'done') {
-      renderCampaignSummary();
-      addToHistory();
-    }
-  } catch(e) {
-    console.warn('Could not fetch results:', e);
+  // Campaign complete?
+  if (jobs.csg && jobs.csg.status === 'done' &&
+      jobs.kharg && jobs.kharg.status === 'done') {
+    renderCampaignSummary();
+    addToHistory();
   }
 }
 
@@ -960,13 +947,13 @@ function renderCampaignSummary() {
 // ═══════════════════════════════════════════════════════════════
 function addToHistory() {
   const entry = {
-    ts:         new Date(),
-    csgLabel:   jobs.csg   ? jobs.csg.label   : '—',
-    khargLabel: jobs.kharg ? jobs.kharg.label : '—',
-    csgResult:  jobs.csg   ? jobs.csg.result   : null,
-    khargResult:jobs.kharg ? jobs.kharg.result : null,
-    csgJobId:   jobs.csg   ? jobs.csg.jobId    : null,
-    khargJobId: jobs.kharg ? jobs.kharg.jobId  : null,
+    ts:            new Date(),
+    csgLabel:      jobs.csg   ? jobs.csg.label      : '—',
+    khargLabel:    jobs.kharg ? jobs.kharg.label    : '—',
+    csgResult:     jobs.csg   ? jobs.csg.result     : null,
+    khargResult:   jobs.kharg ? jobs.kharg.result   : null,
+    csgBlobUrl:    jobs.csg   ? jobs.csg.kmzBlobUrl   : null,
+    khargBlobUrl:  jobs.kharg ? jobs.kharg.kmzBlobUrl : null,
   };
   runHistory.unshift(entry);
   document.getElementById('history-count').textContent = runHistory.length;
@@ -1008,8 +995,8 @@ function renderHistory() {
 }
 
 function renderHistoryDetail(cr, kr, e) {
-  const dlCsg   = e.csgJobId   ? `<a href="${API_BASE}/api/download/${e.csgJobId}"   class="btn btn-green btn-sm" download>⬇ CSG KMZ</a>`   : '';
-  const dlKharg = e.khargJobId ? `<a href="${API_BASE}/api/download/${e.khargJobId}" class="btn btn-green btn-sm" download>⬇ Kharg KMZ</a>` : '';
+  const dlCsg   = e.csgBlobUrl   ? `<a href="${e.csgBlobUrl}"   class="btn btn-green btn-sm" download="csg.kmz">⬇ CSG KMZ</a>`   : '';
+  const dlKharg = e.khargBlobUrl ? `<a href="${e.khargBlobUrl}" class="btn btn-green btn-sm" download="kharg.kmz">⬇ Kharg KMZ</a>` : '';
   return `<table class="stat-table" style="font-size:0.62rem">
     <tr><td style="color:#22c55e;font-weight:600" colspan="2">Naval</td></tr>
     <tr><td>Breakthrough</td><td>${(cr.n_breakthrough||0).toLocaleString()}</td></tr>
@@ -1055,6 +1042,13 @@ function switchLogTab(tab) {
 // ═══════════════════════════════════════════════════════════════
 // HELPERS
 // ═══════════════════════════════════════════════════════════════
+function appendLog(which, line) {
+  const el = document.getElementById(`log-${which || 'csg'}`);
+  if (!el) return;
+  el.textContent += line + '\n';
+  el.scrollTop = el.scrollHeight;
+}
+
 function clearCampaignResults() {
   ['csg','kharg'].forEach(clearJobResults);
   document.getElementById('campaign-summary-wrap').style.display = 'none';
@@ -1063,7 +1057,9 @@ function clearCampaignResults() {
 function clearJobResults(which) {
   setDot(which, 'idle');
   document.getElementById(`${which}-stats-wrap`).style.display = 'none';
-  document.getElementById(`btn-dl-${which}`).style.display = 'none';
+  const dlBtn = document.getElementById(`btn-dl-${which}`);
+  dlBtn.style.display = 'none';
+  if (jobs[which] && jobs[which].kmzBlobUrl) URL.revokeObjectURL(jobs[which].kmzBlobUrl);
   jobs[which] = null;
 }
 
@@ -1118,7 +1114,13 @@ document.getElementById('panel-campaign').style.flexDirection = 'column';
 document.getElementById('panel-log').style.display      = 'none';
 document.getElementById('panel-history').style.display  = 'none';
 
-boot();
+// Disable run buttons until Pyodide is ready
+['btn-campaign','btn-run-csg','btn-run-kharg'].forEach(id => {
+  const el = document.getElementById(id);
+  if (el) el.disabled = true;
+});
+
+boot();  // sends {type:'init'} to the worker
 </script>
 </body>
 </html>

@@ -482,6 +482,7 @@ def download_kmz(job_id: str):
 
 
 # ---------------------------------------------------------------------------
+# ---------------------------------------------------------------------------
 # Static mounts + SPA root
 # ---------------------------------------------------------------------------
 if os.path.isdir(_SCENARIOS_DIR):
@@ -495,6 +496,37 @@ def serve_index():
     if not os.path.exists(index_path):
         raise HTTPException(status_code=404, detail="index.html not found")
     return FileResponse(index_path, media_type="text/html")
+
+
+@app.get("/worker.js")
+def serve_worker_js():
+    """Serve the Pyodide Web Worker script."""
+    path = os.path.join(_WEB_DIR, "worker.js")
+    if not os.path.exists(path):
+        raise HTTPException(status_code=404, detail="worker.js not found")
+    return FileResponse(path, media_type="application/javascript")
+
+
+@app.get("/persian_gulf_simulation/{file_path:path}")
+def serve_python_source(file_path: str):
+    """Serve simulation Python source files for the Pyodide worker to fetch.
+
+    Only .py files are served; path traversal is rejected.
+    """
+    # Reject path traversal
+    clean = os.path.normpath(file_path)
+    if ".." in clean.split(os.sep):
+        raise HTTPException(status_code=403, detail="Forbidden")
+
+    # Only serve Python source files
+    if not clean.endswith(".py"):
+        raise HTTPException(status_code=403, detail="Only .py files are served")
+
+    full_path = os.path.join(_REPO_ROOT, "persian_gulf_simulation", clean)
+    if not os.path.isfile(full_path):
+        raise HTTPException(status_code=404, detail="File not found")
+
+    return FileResponse(full_path, media_type="text/plain; charset=utf-8")
 
 
 # ---------------------------------------------------------------------------
