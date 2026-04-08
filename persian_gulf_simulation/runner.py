@@ -299,7 +299,7 @@ def _run_scenario(out_kmz, scenario_label="Kharg Island Assault",
         "ship_hits":        total_ship_hits,
         "outcome":          outcome_str,
         "sunk_ships":       sunk,
-        "stinger_kills":    stinger_kills,
+        "stinger_kills":    list(stinger_kills),
     }
 
 
