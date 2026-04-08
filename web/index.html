@@ -5,563 +5,1095 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>DAEMON — Wargame Simulation UI</title>
 <script src="https://cdn.tailwindcss.com"></script>
-<script>
-  tailwind.config = {
-    darkMode: 'class',
-    theme: {
-      extend: {
-        colors: {
-          'terminal': '#0a0f0a',
-          'panel': '#0f1410',
-          'border': '#1e3a1e',
-          'accent': '#22c55e',
-          'amber-h': '#f59e0b',
-          'danger': '#ef4444',
-          'muted': '#4b5563',
-        }
-      }
-    }
-  }
-</script>
 <style>
-  * { box-sizing: border-box; }
-  body { background: #080d08; color: #d1fae5; font-family: 'Consolas', 'Monaco', monospace; }
-  ::-webkit-scrollbar { width: 6px; height: 6px; }
-  ::-webkit-scrollbar-track { background: #0a0f0a; }
-  ::-webkit-scrollbar-thumb { background: #1e3a1e; border-radius: 3px; }
-  ::-webkit-scrollbar-thumb:hover { background: #22c55e; }
-  .tab-active   { border-bottom: 2px solid #22c55e; color: #22c55e; }
-  .tab-inactive { border-bottom: 2px solid transparent; color: #4b5563; }
-  .tab-inactive:hover { color: #86efac; }
-  .tr-selected  { background: #0f2d1a !important; outline: 1px solid #22c55e; }
-  .tr-hover:hover { background: #0a1f10; cursor: pointer; }
-  input[type=number], input[type=text] {
-    background: #0a0f0a;
-    border: 1px solid #1e3a1e;
-    color: #d1fae5;
-    padding: 2px 6px;
-    border-radius: 3px;
-    width: 100%;
-    font-size: 0.75rem;
-  }
-  input[type=number]:focus, input[type=text]:focus {
-    outline: 1px solid #22c55e;
-    border-color: #22c55e;
-  }
-  .param-changed { border-color: #f59e0b !important; outline: 1px solid #f59e0b; }
-  .log-pre {
-    background: #020402;
-    border: 1px solid #1e3a1e;
-    border-radius: 4px;
-    padding: 8px;
-    font-size: 0.7rem;
-    line-height: 1.4;
-    height: 300px;
-    overflow-y: auto;
-    white-space: pre-wrap;
-    word-break: break-all;
-    color: #86efac;
-  }
-  .stat-card {
-    background: #0a0f0a;
-    border: 1px solid #1e3a1e;
-    border-radius: 4px;
-    padding: 10px;
-    font-size: 0.72rem;
-  }
-  .stat-val { color: #22c55e; font-weight: bold; }
-  .stat-bad { color: #ef4444; font-weight: bold; }
-  .stat-warn { color: #f59e0b; font-weight: bold; }
-  .btn-primary {
-    background: #14532d;
-    border: 1px solid #22c55e;
-    color: #22c55e;
-    padding: 5px 14px;
-    border-radius: 3px;
-    cursor: pointer;
-    font-size: 0.8rem;
-    transition: background 0.15s;
-  }
-  .btn-primary:hover { background: #166534; }
-  .btn-primary:disabled { opacity: 0.4; cursor: not-allowed; }
-  .btn-secondary {
-    background: #1c1f1c;
-    border: 1px solid #374151;
-    color: #9ca3af;
-    padding: 5px 14px;
-    border-radius: 3px;
-    cursor: pointer;
-    font-size: 0.8rem;
-    transition: background 0.15s;
-  }
-  .btn-secondary:hover { background: #262a26; }
-  .btn-amber {
-    background: #451a03;
-    border: 1px solid #f59e0b;
-    color: #f59e0b;
-    padding: 5px 14px;
-    border-radius: 3px;
-    cursor: pointer;
-    font-size: 0.8rem;
-    transition: background 0.15s;
-  }
-  .btn-amber:hover { background: #78350f; }
-  .sort-asc::after  { content: ' ▲'; opacity: 0.7; }
-  .sort-desc::after { content: ' ▼'; opacity: 0.7; }
-  .desc-cell { max-width: 0; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; cursor: pointer; }
-  .desc-cell.expanded { white-space: normal; word-break: break-word; overflow: visible; max-width: none; }
-  th { cursor: pointer; user-select: none; white-space: nowrap; }
-  th:hover { color: #22c55e; }
-  .panel { background: #0a0f0a; border-right: 1px solid #1e3a1e; overflow-y: auto; }
-  .section-title { font-size: 0.65rem; letter-spacing: 0.12em; text-transform: uppercase; color: #4b5563; margin-bottom: 6px; padding-bottom: 4px; border-bottom: 1px solid #1e3a1e; }
-  .compare-badge { background: #1e3a1e; color: #22c55e; font-size: 0.65rem; padding: 1px 6px; border-radius: 10px; margin-left: 6px; }
+* { box-sizing: border-box; }
+body { background: #080d08; color: #d1fae5; font-family: 'Consolas','Monaco',monospace; }
+::-webkit-scrollbar { width:5px; height:5px; }
+::-webkit-scrollbar-track { background:#0a0f0a; }
+::-webkit-scrollbar-thumb { background:#1e3a1e; border-radius:3px; }
+::-webkit-scrollbar-thumb:hover { background:#22c55e; }
+
+/* Step headers */
+.step-header { font-size:0.6rem; letter-spacing:0.15em; text-transform:uppercase;
+  color:#22c55e; padding:4px 8px; background:#0a1f10; border-bottom:1px solid #1e3a1e; }
+.step-num { background:#22c55e; color:#020402; font-weight:bold;
+  border-radius:50%; width:14px; height:14px; display:inline-flex;
+  align-items:center; justify-content:center; font-size:0.6rem; margin-right:5px; }
+
+/* Tables */
+.sc-table { width:100%; font-size:0.7rem; border-collapse:collapse; }
+.sc-table th { color:#4b5563; text-align:left; padding:2px 4px; cursor:pointer;
+  user-select:none; white-space:nowrap; position:sticky; top:0; background:#0a0f0a; }
+.sc-table th:hover { color:#22c55e; }
+.sc-table td { padding:2px 4px; border-bottom:1px solid #0f2010; vertical-align:top; }
+.sc-table tr:hover td { background:#0a1f10; cursor:pointer; }
+.sc-table tr.selected td { background:#0f2d1a; outline:1px solid #22c55e;
+  outline-offset:-1px; }
+.sort-asc::after  { content:' ▲'; opacity:0.6; }
+.sort-desc::after { content:' ▼'; opacity:0.6; }
+
+/* Params */
+.param-group-header { font-size:0.6rem; letter-spacing:0.1em; text-transform:uppercase;
+  color:#22c55e; padding:4px 0; border-bottom:1px solid #1e3a1e; cursor:pointer;
+  display:flex; align-items:center; justify-content:space-between; }
+.param-group-header:hover { color:#86efac; }
+.param-row { display:grid; grid-template-columns:1fr 1fr; gap:4px;
+  align-items:center; padding:2px 0; border-bottom:1px solid #0a1a0a; }
+.param-label { font-size:0.68rem; color:#9ca3af; line-height:1.3; }
+.param-desc  { font-size:0.58rem; color:#4b5563; line-height:1.2; margin-top:1px; }
+input[type=number], input[type=text] {
+  background:#0a0f0a; border:1px solid #1e3a1e; color:#d1fae5;
+  padding:2px 5px; border-radius:3px; width:100%; font-size:0.7rem;
+  font-family:inherit; }
+input:focus { outline:1px solid #22c55e; border-color:#22c55e; }
+.param-changed { border-color:#f59e0b !important; color:#fde68a !important; }
+.param-changed:focus { outline:1px solid #f59e0b; }
+input[type=checkbox] { accent-color:#22c55e; width:14px; height:14px; }
+input[type=checkbox].changed { accent-color:#f59e0b; }
+
+/* Buttons */
+.btn { padding:4px 12px; border-radius:3px; cursor:pointer; font-size:0.75rem;
+  font-family:inherit; transition:background 0.12s; border:1px solid; }
+.btn-green  { background:#14532d; border-color:#22c55e; color:#22c55e; }
+.btn-green:hover  { background:#166534; }
+.btn-green:disabled { opacity:0.35; cursor:not-allowed; }
+.btn-gray   { background:#1c1f1c; border-color:#374151; color:#9ca3af; }
+.btn-gray:hover   { background:#262a26; }
+.btn-amber  { background:#451a03; border-color:#f59e0b; color:#f59e0b; }
+.btn-amber:hover  { background:#78350f; }
+.btn-red    { background:#2d0a0a; border-color:#ef4444; color:#ef4444; }
+.btn-red:hover    { background:#450a0a; }
+.btn-sm { padding:2px 8px; font-size:0.68rem; }
+
+/* Preset buttons */
+.preset-btn { padding:3px 10px; border-radius:3px; cursor:pointer; font-size:0.68rem;
+  font-family:inherit; background:#0a1a0a; border:1px solid #1e3a1e; color:#6b7280;
+  transition:all 0.12s; white-space:nowrap; }
+.preset-btn:hover { border-color:#22c55e; color:#22c55e; background:#0a1f10; }
+.preset-btn.active { border-color:#22c55e; color:#22c55e; background:#0f2d1a; }
+
+/* Tabs */
+.tab-btn { padding:4px 10px; font-size:0.68rem; cursor:pointer; border-bottom:2px solid transparent;
+  color:#4b5563; white-space:nowrap; }
+.tab-btn:hover { color:#86efac; }
+.tab-btn.active { border-bottom-color:#22c55e; color:#22c55e; }
+.sub-tab-btn { padding:2px 8px; font-size:0.62rem; cursor:pointer;
+  border-bottom:1px solid transparent; color:#4b5563; }
+.sub-tab-btn:hover { color:#86efac; }
+.sub-tab-btn.active { border-bottom-color:#22c55e; color:#86efac; }
+
+/* Log */
+.log-pre { background:#020402; border:1px solid #1e3a1e; border-radius:3px; padding:6px;
+  font-size:0.65rem; line-height:1.4; overflow-y:auto; white-space:pre-wrap;
+  word-break:break-all; color:#86efac; flex:1; min-height:0; }
+
+/* Stats */
+.stat-table { width:100%; font-size:0.7rem; border-collapse:collapse; }
+.stat-table td { padding:2px 4px; border-bottom:1px solid #0a1a0a; }
+.stat-table td:first-child { color:#6b7280; width:42%; }
+.v-good  { color:#22c55e; font-weight:600; }
+.v-warn  { color:#f59e0b; font-weight:600; }
+.v-bad   { color:#ef4444; font-weight:600; }
+.v-neu   { color:#d1fae5; }
+
+/* History */
+.hist-item { padding:6px 8px; border-bottom:1px solid #0f2010; cursor:pointer; }
+.hist-item:hover { background:#0a1f10; }
+.hist-item.expanded { background:#0a1f10; }
+
+/* Status dots */
+.dot { width:8px; height:8px; border-radius:50%; display:inline-block; }
+.dot-idle    { background:#374151; }
+.dot-running { background:#f59e0b; animation:pulse 1s infinite; }
+.dot-done    { background:#22c55e; }
+.dot-error   { background:#ef4444; }
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+
+/* Realism slider */
+input[type=range] { accent-color:#22c55e; width:100%; height:4px; }
+
+/* Campaign status bar */
+.campaign-step { display:flex; align-items:center; gap:6px; padding:4px 8px;
+  border:1px solid #1e3a1e; border-radius:3px; font-size:0.68rem; }
+
+/* Inherit badge */
+.inherit-badge { font-size:0.58rem; padding:1px 5px; border-radius:3px;
+  background:#1e3a1e; color:#22c55e; margin-left:4px; }
+
+.panel-box { background:#0a0f0a; border:1px solid #1e3a1e; border-radius:3px; }
+.section-label { font-size:0.58rem; letter-spacing:0.12em; text-transform:uppercase;
+  color:#4b5563; margin-bottom:3px; }
 </style>
 </head>
-<body class="flex flex-col h-screen overflow-hidden">
+<body style="display:flex;flex-direction:column;height:100vh;overflow:hidden">
 
-<!-- Header -->
-<header class="flex items-center px-4 py-2 border-b border-green-900" style="background:#050d05">
-  <div class="text-green-400 font-bold text-sm tracking-widest mr-4">DAEMON</div>
-  <div class="text-green-700 text-xs">Persian Gulf Wargame Simulation</div>
-  <div class="ml-auto text-xs text-gray-600" id="status-bar">Ready</div>
+<!-- ═══════════════════════════════════════ HEADER ══════════════════════════ -->
+<header style="background:#050d05;border-bottom:1px solid #1e3a1e"
+        class="flex items-center px-3 py-1.5 gap-3 shrink-0">
+  <div class="text-green-400 font-bold text-sm tracking-widest">DAEMON</div>
+  <div class="text-green-900 text-xs">Persian Gulf Wargame</div>
+  <div class="ml-auto flex items-center gap-3">
+    <div class="text-xs text-gray-600" id="status-bar">Initialising…</div>
+  </div>
 </header>
 
-<!-- Main three-panel layout -->
+<!-- ═══════════════════════════════════════ PRESETS + SLIDER ═════════════════ -->
+<div style="background:#050d05;border-bottom:1px solid #1e3a1e"
+     class="flex items-center px-3 py-1.5 gap-3 shrink-0 flex-wrap">
+  <div class="section-label shrink-0">Presets</div>
+  <div class="flex gap-1.5 flex-wrap" id="presets-bar">
+    <!-- rendered by JS -->
+  </div>
+  <div class="ml-auto flex items-center gap-2 shrink-0">
+    <div class="section-label whitespace-nowrap">Realism filter</div>
+    <input type="range" id="realism-slider" min="1" max="100" value="100"
+           style="width:100px" oninput="onRealismSlider(this.value)">
+    <div class="text-xs text-green-700 w-16" id="realism-label">All scenarios</div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════ THREE COLUMNS ════════════════════ -->
 <div class="flex flex-1 overflow-hidden">
 
-  <!-- LEFT PANEL: Scenario browser -->
-  <div class="panel flex flex-col" style="width:35%; min-width:320px;">
-    <div class="p-3 border-b border-green-900">
-      <div class="section-title">Scenario Library</div>
-      <!-- Tabs -->
-      <div class="flex gap-4 mt-1">
-        <button id="tab-kharg" class="tab-active text-xs pb-1" onclick="switchTab('kharg')">Kharg Island</button>
-        <button id="tab-csg"   class="tab-inactive text-xs pb-1" onclick="switchTab('csg')">CSG Naval</button>
-      </div>
-    </div>
+  <!-- ─────────────────────── LEFT: CAMPAIGN SETUP ──────────────────────── -->
+  <div style="width:30%;min-width:260px;border-right:1px solid #1e3a1e;
+              background:#080d08;display:flex;flex-direction:column;overflow:hidden">
 
-    <div class="flex-1 overflow-auto p-2">
-      <table class="w-full text-xs border-collapse" id="scenario-table">
+    <!-- STEP 1: CSG -->
+    <div class="step-header shrink-0">
+      <span class="step-num">1</span>CSG Naval Engagement
+    </div>
+    <div style="padding:4px 6px;border-bottom:1px solid #0f2010" class="shrink-0">
+      <input type="text" id="csg-search" placeholder="Search CSG scenarios…"
+             oninput="renderCSGTable()" style="font-size:0.65rem">
+    </div>
+    <div style="flex:1;overflow-y:auto;min-height:80px">
+      <table class="sc-table">
         <thead>
-          <tr class="text-green-700 text-left sticky top-0" style="background:#0a0f0a">
-            <th class="py-1 pr-2 w-8"  onclick="sortTable('rank')"  id="th-rank">Rank</th>
-            <th class="py-1 pr-2"      onclick="sortTable('label')" id="th-label">Label</th>
-            <th class="py-1"           onclick="sortTable('description')" id="th-desc">Description</th>
+          <tr>
+            <th style="width:28px" onclick="sortCSG('rank')"  id="csg-th-rank">#</th>
+            <th onclick="sortCSG('label')" id="csg-th-label">Label</th>
           </tr>
         </thead>
-        <tbody id="scenario-tbody">
-          <tr><td colspan="3" class="text-gray-600 py-4 text-center">Loading scenarios...</td></tr>
+        <tbody id="csg-tbody">
+          <tr><td colspan="2" class="text-center" style="color:#4b5563;padding:8px">Loading…</td></tr>
         </tbody>
       </table>
     </div>
-  </div>
 
-  <!-- MIDDLE PANEL: Parameter editor -->
-  <div class="panel flex flex-col border-r border-green-900" style="width:35%; min-width:300px;">
-    <div class="p-3 border-b border-green-900">
-      <div class="section-title">Parameter Editor</div>
-      <div id="selected-label" class="text-green-300 text-xs font-bold truncate mt-1">— no scenario selected —</div>
-      <div id="selected-engine" class="text-gray-600 text-xs mt-0.5"></div>
+    <!-- STEP 2: Kharg -->
+    <div class="step-header shrink-0" style="margin-top:0">
+      <span class="step-num">2</span>Kharg Island Assault
+    </div>
+    <div style="padding:4px 6px;border-bottom:1px solid #0f2010" class="shrink-0">
+      <input type="text" id="kharg-search" placeholder="Search Kharg scenarios…"
+             oninput="renderKhargTable()" style="font-size:0.65rem">
+    </div>
+    <div style="flex:1;overflow-y:auto;min-height:80px">
+      <table class="sc-table">
+        <thead>
+          <tr>
+            <th style="width:28px" onclick="sortKharg('rank')"  id="kharg-th-rank">#</th>
+            <th onclick="sortKharg('label')" id="kharg-th-label">Label</th>
+          </tr>
+        </thead>
+        <tbody id="kharg-tbody">
+          <tr><td colspan="2" class="text-center" style="color:#4b5563;padding:8px">Loading…</td></tr>
+        </tbody>
+      </table>
     </div>
 
-    <div class="flex-1 overflow-auto p-3" id="param-editor">
-      <div class="text-gray-600 text-xs mt-4 text-center">Select a scenario to edit parameters.</div>
-    </div>
-
-    <!-- Action buttons -->
-    <div class="p-3 border-t border-green-900 flex flex-col gap-2">
+    <!-- Run buttons -->
+    <div style="padding:8px;border-top:1px solid #1e3a1e;background:#050d05;
+                display:flex;flex-direction:column;gap:4px" class="shrink-0">
+      <button class="btn btn-green" id="btn-campaign" onclick="runCampaign()" disabled
+              style="font-weight:600">
+        ▶ Run Campaign (CSG + Kharg)
+      </button>
       <div class="flex gap-2">
-        <button class="btn-primary flex-1" id="btn-run" onclick="runScenario()" disabled>Run Scenario</button>
-        <button class="btn-secondary" id="btn-reset" onclick="resetParams()">Reset</button>
+        <button class="btn btn-gray btn-sm flex-1" id="btn-run-csg"
+                onclick="runSingle('csg')" disabled>Run CSG only</button>
+        <button class="btn btn-gray btn-sm flex-1" id="btn-run-kharg"
+                onclick="runSingle('kharg')" disabled>Run Kharg only</button>
       </div>
-      <div class="flex items-center gap-2">
-        <button class="btn-amber flex-1" id="btn-compare" onclick="addToCompare()" disabled>
-          Add to Compare
-          <span class="compare-badge" id="compare-count">0/2</span>
-        </button>
-        <button class="btn-secondary text-xs" id="btn-clear-compare" onclick="clearCompare()">Clear</button>
+      <label class="flex items-center gap-2 text-xs text-gray-500 cursor-pointer"
+             style="padding:2px 0">
+        <input type="checkbox" id="inherit-toggle" checked
+               onchange="onInheritToggle()"
+               style="accent-color:#22c55e;width:12px;height:12px">
+        Auto-inherit naval params into Kharg scenario
+      </label>
+    </div>
+  </div>
+
+  <!-- ─────────────────────── MIDDLE: PARAM EDITOR ──────────────────────── -->
+  <div style="width:35%;min-width:280px;border-right:1px solid #1e3a1e;
+              background:#080d08;display:flex;flex-direction:column;overflow:hidden">
+
+    <!-- Param tabs -->
+    <div style="border-bottom:1px solid #1e3a1e;background:#050d05;
+                padding:0 8px;display:flex;align-items:center;gap:0" class="shrink-0">
+      <button class="tab-btn active" id="ptab-csg"   onclick="switchParamTab('csg')">
+        CSG Params
+      </button>
+      <button class="tab-btn"        id="ptab-kharg" onclick="switchParamTab('kharg')">
+        Kharg Params
+      </button>
+      <div class="ml-auto flex gap-1.5 py-1">
+        <button class="btn btn-gray btn-sm" onclick="resetCurrentParams()">Reset</button>
+      </div>
+    </div>
+
+    <!-- Selected scenario name -->
+    <div style="padding:4px 8px;border-bottom:1px solid #0f2010;background:#050d05"
+         class="shrink-0">
+      <div id="param-selected-label" style="font-size:0.68rem;color:#86efac;
+           white-space:nowrap;overflow:hidden;text-overflow:ellipsis">
+        — select a scenario in Step 1 or 2 —
+      </div>
+      <div id="param-inherit-note" style="font-size:0.58rem;color:#f59e0b;display:none"
+           class="mt-0.5"></div>
+    </div>
+
+    <!-- Param groups -->
+    <div style="flex:1;overflow-y:auto;padding:4px 8px" id="param-editor">
+      <div style="color:#4b5563;font-size:0.7rem;text-align:center;padding:20px">
+        Select a scenario to edit parameters.
       </div>
     </div>
   </div>
 
-  <!-- RIGHT PANEL: Run output & results -->
-  <div class="flex flex-col flex-1 overflow-hidden" style="background:#080d08">
-    <div class="p-3 border-b border-green-900">
-      <div class="section-title">Run Output</div>
+  <!-- ─────────────────────── RIGHT: RESULTS ────────────────────────────── -->
+  <div style="flex:1;background:#080d08;display:flex;flex-direction:column;overflow:hidden">
+
+    <!-- Result tabs -->
+    <div style="border-bottom:1px solid #1e3a1e;background:#050d05;
+                padding:0 8px;display:flex;align-items:center" class="shrink-0">
+      <button class="tab-btn active" id="rtab-campaign" onclick="switchResultTab('campaign')">Campaign</button>
+      <button class="tab-btn"        id="rtab-log"      onclick="switchResultTab('log')">Log</button>
+      <button class="tab-btn"        id="rtab-history"  onclick="switchResultTab('history')">
+        History <span id="history-count"
+          style="font-size:0.55rem;background:#1e3a1e;color:#22c55e;
+                 padding:0 4px;border-radius:8px;margin-left:2px">0</span>
+      </button>
     </div>
-    <div class="flex-1 overflow-auto p-3 flex flex-col gap-3">
 
-      <!-- Terminal log -->
-      <div>
-        <div class="text-gray-600 text-xs mb-1">STDOUT LOG</div>
-        <pre class="log-pre" id="log-output">Waiting for run...</pre>
+    <!-- ── CAMPAIGN PANEL ── -->
+    <div id="panel-campaign" style="flex:1;overflow-y:auto;padding:8px;
+         display:flex;flex-direction:column;gap:6px">
+
+      <!-- Status row -->
+      <div class="flex gap-3">
+        <div class="campaign-step flex-1" id="csg-status-box">
+          <span class="dot dot-idle" id="csg-dot"></span>
+          <div>
+            <div style="font-size:0.62rem;color:#4b5563">CSG Naval</div>
+            <div style="font-size:0.65rem;color:#86efac" id="csg-status-label">No scenario selected</div>
+          </div>
+          <div class="ml-auto">
+            <a id="btn-dl-csg" href="#" download
+               class="btn btn-green btn-sm" style="display:none">⬇ KMZ</a>
+          </div>
+        </div>
+        <div class="campaign-step flex-1" id="kharg-status-box">
+          <span class="dot dot-idle" id="kharg-dot"></span>
+          <div>
+            <div style="font-size:0.62rem;color:#4b5563">Kharg Island</div>
+            <div style="font-size:0.65rem;color:#86efac" id="kharg-status-label">No scenario selected</div>
+          </div>
+          <div class="ml-auto">
+            <a id="btn-dl-kharg" href="#" download
+               class="btn btn-green btn-sm" style="display:none">⬇ KMZ</a>
+          </div>
+        </div>
       </div>
 
-      <!-- Run controls / download -->
-      <div class="flex items-center gap-3" id="run-status-row">
-        <span id="run-status-text" class="text-xs text-gray-500">No run yet.</span>
-        <a id="btn-download" class="btn-primary hidden" href="#" download>Download KMZ</a>
+      <!-- CSG stats -->
+      <div id="csg-stats-wrap" style="display:none">
+        <div class="section-label">CSG NAVAL — RESULTS</div>
+        <div class="panel-box" style="padding:6px" id="csg-stats-content"></div>
       </div>
 
-      <!-- Stats card -->
-      <div id="stats-card" class="hidden">
-        <div class="text-gray-600 text-xs mb-1">BATTLE STATISTICS</div>
-        <div class="stat-card" id="stats-content"></div>
+      <!-- Kharg stats -->
+      <div id="kharg-stats-wrap" style="display:none">
+        <div class="section-label">KHARG ISLAND — RESULTS</div>
+        <div class="panel-box" style="padding:6px" id="kharg-stats-content"></div>
       </div>
 
-      <!-- Comparison table -->
-      <div id="compare-section" class="hidden">
-        <div class="text-gray-600 text-xs mb-1">SCENARIO COMPARISON</div>
-        <div class="stat-card overflow-x-auto" id="compare-content"></div>
+      <!-- Campaign summary -->
+      <div id="campaign-summary-wrap" style="display:none">
+        <div class="section-label">CAMPAIGN SUMMARY</div>
+        <div class="panel-box" style="padding:6px" id="campaign-summary-content"></div>
       </div>
 
+      <!-- Idle placeholder -->
+      <div id="campaign-idle" style="color:#4b5563;font-size:0.72rem;
+           text-align:center;padding:30px">
+        Select scenarios in Steps 1 &amp; 2, then click Run Campaign.
+      </div>
     </div>
-  </div>
 
-</div>
+    <!-- ── LOG PANEL ── -->
+    <div id="panel-log" style="flex:1;display:none;flex-direction:column;overflow:hidden">
+      <div style="padding:2px 8px;border-bottom:1px solid #0f2010;background:#050d05;
+                  display:flex;gap:0" class="shrink-0">
+        <button class="sub-tab-btn active" id="ltab-csg"   onclick="switchLogTab('csg')">CSG</button>
+        <button class="sub-tab-btn"        id="ltab-kharg" onclick="switchLogTab('kharg')">Kharg</button>
+      </div>
+      <div style="flex:1;padding:6px;display:flex;flex-direction:column;min-height:0">
+        <pre class="log-pre" id="log-csg">No CSG run yet.</pre>
+        <pre class="log-pre" id="log-kharg" style="display:none">No Kharg run yet.</pre>
+      </div>
+    </div>
+
+    <!-- ── HISTORY PANEL ── -->
+    <div id="panel-history" style="flex:1;display:none;overflow-y:auto">
+      <div id="history-list" style="font-size:0.7rem">
+        <div style="color:#4b5563;text-align:center;padding:24px">No runs yet.</div>
+      </div>
+    </div>
+
+  </div><!-- end right -->
+</div><!-- end columns -->
 
 <script>
-// ─────────────────────────────────────────────────────────
-// State
-// ─────────────────────────────────────────────────────────
-let allScenarios = [];
-// Point at FastAPI regardless of which port this HTML is served from
+// ═══════════════════════════════════════════════════════════════
+// CONSTANTS
+// ═══════════════════════════════════════════════════════════════
 const API_BASE = 'http://localhost:8000';
 
-let currentTab   = 'kharg';
-let sortCol      = 'rank';
-let sortDir      = 'asc';
-let selectedSc   = null;   // full scenario object
-let editedParams = {};     // user-modified param values
-let currentJobId = null;
-let currentSse   = null;
+const PRESETS = [
+  { name:'Baseline',      csg:'realistic',          kharg:'kharg_06_baseline_fim92_stinger_250opfor',
+    desc:'Standard peacetime garrison, FIM-92 Stinger, most likely starting point' },
+  { name:'Russia-Armed',  csg:'realistic',          kharg:'kharg_07_igla_s_sa24_250opfor',
+    desc:'Confirmed Igla-S SA-24 MANPADS in IRGC inventory (IISS 2024)' },
+  { name:'Drone War',     csg:'one_percent_probe',  kharg:'kharg_01_island_drone_swarm_1000',
+    desc:'Iranian swarm doctrine across both theaters — small CSG probe + LZ saturation' },
+  { name:'US Best Case',  csg:'usa_best',           kharg:'kharg_08_f35_lightning_strike_8pct_survive',
+    desc:'Pre-emptive strikes degrade CSG threat; F-35 SEAD/DEAD clears Kharg MANPADS' },
+  { name:'Iran Best Case',csg:'iran_best',          kharg:'kharg_24_fim92_stinger_2000opfor',
+    desc:'Maximum Iranian capability: full inventory + 2,000-man garrison' },
+];
 
-let compareSlots = [null, null];  // up to 2 results: {label, result, jobId}
+// CSG scenario → suggested Kharg naval params (n_drone_boats, n_shahed)
+const CSG_INHERITANCE = {
+  realistic:              { n_drone_boats:50, n_shahed:50 },
+  one_percent_probe:      { n_drone_boats:5,  n_shahed:5  },
+  one_percent_fatah2:     { n_drone_boats:5,  n_shahed:5  },
+  depleted_drone_first:   { n_drone_boats:10, n_shahed:10 },
+  depleted_coastal:       { n_drone_boats:10, n_shahed:10 },
+  depleted_israel_split:  { n_drone_boats:8,  n_shahed:8  },
+  medium:                 { n_drone_boats:30, n_shahed:30 },
+  drone_first_low:        { n_drone_boats:20, n_shahed:20 },
+  drone_first_medium:     { n_drone_boats:30, n_shahed:30 },
+  drone_first_high:       { n_drone_boats:50, n_shahed:50 },
+  low:                    { n_drone_boats:15, n_shahed:15 },
+  high:                   { n_drone_boats:50, n_shahed:50 },
+  iran_best:              { n_drone_boats:50, n_shahed:50 },
+  usa_best:               { n_drone_boats:4,  n_shahed:4  },
+  us_win_preemption:      { n_drone_boats:4,  n_shahed:4  },
+  us_win_ew_dominance:    { n_drone_boats:8,  n_shahed:8  },
+  us_win_allied_umbrella: { n_drone_boats:8,  n_shahed:8  },
+  us_win_c2_disrupted:    { n_drone_boats:15, n_shahed:15 },
+  us_win_arsenal_attrition:{ n_drone_boats:12, n_shahed:12 },
+  coordinated_strike:     { n_drone_boats:50, n_shahed:50 },
+  focused_salvo:          { n_drone_boats:50, n_shahed:50 },
+  hypersonic_threat:      { n_drone_boats:50, n_shahed:50 },
+  ballistic_barrage:      { n_drone_boats:10, n_shahed:10 },
+  ascm_swarm:             { n_drone_boats:30, n_shahed:30 },
+  shore_based_defense:    { n_drone_boats:50, n_shahed:50 },
+  strait_transit:         { n_drone_boats:50, n_shahed:50 },
+  caves:                  { n_drone_boats:50, n_shahed:50 },
+  ballistic_surge:        { n_drone_boats:30, n_shahed:30 },
+};
 
-// ─────────────────────────────────────────────────────────
-// Boot
-// ─────────────────────────────────────────────────────────
+// Human-readable param metadata: group, label, description
+const PARAM_META = {
+  // ── Kharg ────────────────────────────────────────────────────────
+  n_irgc:                   { g:'Forces',            l:'IRGC defenders',           d:'Total IRGC infantry defending the island (250 = peacetime garrison, 2000 = full wartime surge)' },
+  osprey_drop_steps:        { g:'Forces',            l:'LZ hover time (steps)',    d:'Steps Osprey hovers at the landing zone — each step ≈ 30 s; doubling this roughly doubles MANPADS exposure' },
+  stinger_pk:               { g:'MANPADS',           l:'Pk in transit',            d:'Probability of MANPADS kill per Osprey in transit (FIM-92 Stinger: 0.25 · Igla-S: 0.35 · Verba SA-25: 0.52)' },
+  stinger_hover_pk:         { g:'MANPADS',           l:'Pk at LZ hover',           d:'Kill probability while Osprey hovers at LZ — much higher (FIM-92: 0.75 · Igla-S: 0.80 · Verba: 0.88)' },
+  stinger_wez_km:           { g:'MANPADS',           l:'WEZ radius (km)',          d:'Weapons engagement zone radius in km (FIM-92: 4.5 · Igla-S: 6.0 · Verba: 6.4)' },
+  n_drone_boats:            { g:'Iranian Strike',    l:'IRGCN drone boats',        d:'Explosive drone boats targeting the fleet — inherited from CSG scenario when auto-inherit is on' },
+  n_shahed:                 { g:'Iranian Strike',    l:'Shahed-136 (fleet)',       d:'Loitering munitions targeting the carrier strike group — inherited from CSG scenario' },
+  n_island_shahed:          { g:'Iranian Strike',    l:'Shahed-136 (island LZs)', d:'Loitering munitions targeting Marine landing zones on Kharg Island' },
+  ai_drone_fraction:        { g:'Iranian Strike',    l:'AI drone fraction',        d:'Fraction of Shaheds with computer-vision guidance (30% harder to intercept, 2× lethal on impact — floor: 2.5%)' },
+  ew_manpads_pk_mult:       { g:'Electronic Warfare',l:'DIRCM multiplier',         d:'MANPADS effectiveness multiplier — 0.10 = full AN/AAQ-24 DIRCM active (90% defeat rate)' },
+  ew_irgc_pk_mult:          { g:'Electronic Warfare',l:'COMJAM multiplier',        d:'IRGC fire effectiveness multiplier — 0.50 = COMJAM halves ground-force lethality' },
+  ew_irgc_defense_mult_adj: { g:'Electronic Warfare',l:'C2 disruption',            d:'C2 disruption reduces IRGC defensive positional bonus' },
+  ew_mildec_fraction:       { g:'Electronic Warfare',l:'MILDEC fraction',          d:'Fraction of IRGC misdirected by deception operations (30% = standard IO package)' },
+  ew_mildec_delay_steps:    { g:'Electronic Warfare',l:'MILDEC delay (steps)',     d:'Steps before misdirected IRGC re-engage (~20 steps ≈ 10 min)' },
+  ew_shahed_abort_rate:     { g:'Electronic Warfare',l:'GPS spoof rate',           d:'Fraction of Shaheds aborted by Iranian GPS spoofing backfire (contested EMS)' },
+  ew_ship_sam_pk_mult:      { g:'Electronic Warfare',l:'Iranian ECM effect',       d:'Iran ECM multiplier on US ship SAM effectiveness (0.80 = 20% SAM degradation)' },
+  beach_assault:            { g:'Mission Profile',   l:'Beach assault mode',       d:'Use LCAC/RHIB beach insertion instead of MV-22B Osprey air assault (no MANPADS exposure in transit)' },
+  iran_retaliation:         { g:'Mission Profile',   l:'Iranian retaliation',      d:'Enable Iranian SRBM salvo (100 missiles) + island Shahed strike at H+50/55 min' },
+  pre_strike_survival_pct:  { g:'Mission Profile',   l:'Pre-strike survivors',     d:'Fraction of IRGC surviving F-35 SEAD/DEAD pre-strike (0.08 = 8%, 0 = no pre-strike run)' },
+  // ── CSG ──────────────────────────────────────────────────────────
+  n_missiles:               { g:'Scale',             l:'Total Iranian munitions',  d:'All munitions in this scenario: Shaheds + SRBMs/MRBMs + cruise missiles + sea drones' },
+  intercept_cap:            { g:'Scale',             l:'Fleet intercept capacity', d:'Maximum intercepts across all 8 CSG magazines combined (SM-6 + SM-2 + ESSM + RAM)' },
+  intercept_rate:           { g:'Defense',           l:'Intercept rate',           d:'Baseline probability of intercepting each munition — compressed launches reduce this' },
+  n_us_strikes_per_csg:     { g:'US Response',       l:'US strikes per CSG',       d:'TLAM/JASSM counter-strikes per carrier strike group targeting Iranian launch sites' },
+  wave_s:                   { g:'Timing',            l:'Launch window (s)',        d:'Duration of the Iranian launch window in seconds' },
+  iran_detection_launch:    { g:'Timing',            l:'Detection-launch',         d:'Iran fires entire inventory on IAF radar detection — no pre-launch suppression possible' },
+  iran_launch_window_s:     { g:'Timing',            l:'Compressed window (s)',    d:'Duration of compressed launch burst when detection-launch is active (1800 s = 30 min)' },
+  n_arc:                    { g:'Display',           l:'Arc segments',             d:'KML arc segments per missile trajectory (visual quality, no sim effect)' },
+  n_sm6:                    { g:'Display',           l:'SM-6 arc segments',        d:'Arc segments for interceptor track rendering (visual only)' },
+};
+
+// ═══════════════════════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════════════════════
+let allScenarios  = [];
+let selectedCSG   = null;
+let selectedKharg = null;
+let csgEdits      = {};   // user-modified CSG params
+let khargEdits    = {};   // user-modified Kharg params
+let activeParamTab   = 'csg';
+let activeResultTab  = 'campaign';
+let activeLogTab     = 'csg';
+let realismPct       = 100;
+let activePreset     = null;
+let csgSortCol = 'rank', csgSortDir = 'asc';
+let khargSortCol = 'rank', khargSortDir = 'asc';
+
+// Jobs: keyed by 'csg' | 'kharg'
+let jobs = { csg: null, kharg: null };
+// { jobId, status, label, engine, result, kmzPath }
+
+let runHistory = [];  // array of { ts, csgLabel, khargLabel, csgResult, khargResult, csgJobId, khargJobId }
+
+// ═══════════════════════════════════════════════════════════════
+// BOOT
+// ═══════════════════════════════════════════════════════════════
 async function boot() {
-  setStatus('Fetching scenarios...');
+  setStatus('Fetching scenarios…');
   try {
     const res = await fetch(`${API_BASE}/api/scenarios`);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
     allScenarios = await res.json();
     setStatus(`Loaded ${allScenarios.length} scenarios`);
-    renderTable();
+    renderPresetsBar();
+    renderCSGTable();
+    renderKhargTable();
   } catch(e) {
     setStatus('ERROR: ' + e.message);
+    document.getElementById('csg-tbody').innerHTML =
+      `<tr><td colspan="2" style="color:#ef4444;padding:8px">Failed to load: ${escHtml(e.message)}</td></tr>`;
   }
 }
 
-// ─────────────────────────────────────────────────────────
-// Tab
-// ─────────────────────────────────────────────────────────
-function switchTab(tab) {
-  currentTab = tab;
-  document.getElementById('tab-kharg').className = tab === 'kharg' ? 'tab-active text-xs pb-1' : 'tab-inactive text-xs pb-1';
-  document.getElementById('tab-csg').className   = tab === 'csg'   ? 'tab-active text-xs pb-1' : 'tab-inactive text-xs pb-1';
-  sortCol = 'rank'; sortDir = 'asc';
-  renderTable();
+// ═══════════════════════════════════════════════════════════════
+// PRESETS
+// ═══════════════════════════════════════════════════════════════
+function renderPresetsBar() {
+  const bar = document.getElementById('presets-bar');
+  bar.innerHTML = PRESETS.map((p,i) =>
+    `<button class="preset-btn" id="preset-${i}" onclick="applyPreset(${i})"
+             title="${escHtml(p.desc)}">${escHtml(p.name)}</button>`
+  ).join('');
 }
 
-// ─────────────────────────────────────────────────────────
-// Table rendering & sorting
-// ─────────────────────────────────────────────────────────
-function sortTable(col) {
-  if (sortCol === col) sortDir = sortDir === 'asc' ? 'desc' : 'asc';
-  else { sortCol = col; sortDir = 'asc'; }
-  renderTable();
+function applyPreset(i) {
+  const p = PRESETS[i];
+  // Deactivate all presets, activate this one
+  PRESETS.forEach((_,j) => {
+    const btn = document.getElementById(`preset-${j}`);
+    if (btn) btn.classList.toggle('active', j === i);
+  });
+  activePreset = i;
+
+  const csc = allScenarios.find(s => s.engine === 'csg'   && s.id === p.csg);
+  const khc = allScenarios.find(s => s.engine === 'kharg' && s.id === p.kharg);
+  if (csc) selectCSGScenario(csc.id);
+  if (khc) selectKhargScenario(khc.id);
 }
 
-function renderTable() {
-  const rows = allScenarios.filter(s => s.engine === currentTab);
+// ═══════════════════════════════════════════════════════════════
+// REALISM SLIDER
+// ═══════════════════════════════════════════════════════════════
+function onRealismSlider(val) {
+  realismPct = parseInt(val);
+  const lbl = document.getElementById('realism-label');
+  if (realismPct >= 100) lbl.textContent = 'All scenarios';
+  else if (realismPct <= 20) lbl.textContent = `Top ${realismPct}% only`;
+  else lbl.textContent = `Top ${realismPct}%`;
+  renderCSGTable();
+  renderKhargTable();
+}
 
-  rows.sort((a, b) => {
-    let av = a[sortCol], bv = b[sortCol];
-    if (typeof av === 'string') av = av.toLowerCase();
-    if (typeof bv === 'string') bv = bv.toLowerCase();
-    if (av < bv) return sortDir === 'asc' ? -1 : 1;
-    if (av > bv) return sortDir === 'asc' ? 1 : -1;
-    return 0;
-  });
+function realismFilter(scenarios, engine) {
+  const all = scenarios.filter(s => s.engine === engine).sort((a,b) => a.rank - b.rank);
+  const keep = Math.max(1, Math.ceil(all.length * realismPct / 100));
+  return new Set(all.slice(0, keep).map(s => s.id));
+}
 
-  // Update header sort indicators
-  ['rank','label','description'].forEach(c => {
-    const th = document.getElementById('th-' + (c === 'description' ? 'desc' : c));
-    if (!th) return;
-    th.className = 'py-1 pr-2' + (sortCol === c ? (sortDir === 'asc' ? ' sort-asc' : ' sort-desc') : '');
-  });
+// ═══════════════════════════════════════════════════════════════
+// CSG TABLE
+// ═══════════════════════════════════════════════════════════════
+function sortCSG(col) {
+  if (csgSortCol === col) csgSortDir = csgSortDir === 'asc' ? 'desc' : 'asc';
+  else { csgSortCol = col; csgSortDir = 'asc'; }
+  renderCSGTable();
+}
 
-  const tbody = document.getElementById('scenario-tbody');
-  if (rows.length === 0) {
-    tbody.innerHTML = '<tr><td colspan="3" class="text-gray-600 py-4 text-center">No scenarios.</td></tr>';
+function renderCSGTable() {
+  const allowed = realismFilter(allScenarios, 'csg');
+  const q = document.getElementById('csg-search').value.toLowerCase();
+  let rows = allScenarios.filter(s =>
+    s.engine === 'csg' && allowed.has(s.id) &&
+    (!q || s.label.toLowerCase().includes(q) || s.description.toLowerCase().includes(q))
+  );
+  rows = sortRows(rows, csgSortCol, csgSortDir);
+  updateSortHeaders('csg-th-rank','csg-th-label', csgSortCol, csgSortDir);
+  const tbody = document.getElementById('csg-tbody');
+  if (!rows.length) {
+    tbody.innerHTML = '<tr><td colspan="2" style="color:#4b5563;padding:6px;text-align:center">No matches</td></tr>';
     return;
   }
-
   tbody.innerHTML = rows.map(s => {
-    const isSelected = selectedSc && selectedSc.id === s.id && selectedSc.engine === s.engine;
-    const desc80 = s.description.length > 80 ? s.description.slice(0, 80) + '…' : s.description;
-    return `<tr class="tr-hover border-b border-green-900 border-opacity-30 ${isSelected ? 'tr-selected' : ''}"
-               onclick="selectScenario('${s.id}','${s.engine}')" data-id="${s.id}" data-engine="${s.engine}">
-      <td class="py-1 pr-2 text-green-700 tabular-nums">${s.rank}</td>
-      <td class="py-1 pr-2 text-green-200 leading-snug">${escHtml(s.label)}</td>
-      <td class="py-1 desc-cell text-gray-500" title="${escHtml(s.description)}"
-          onclick="toggleDesc(event, this)">${escHtml(desc80)}</td>
+    const sel = selectedCSG && selectedCSG.id === s.id;
+    const lbl = s.label.length > 48 ? s.label.slice(0,48)+'…' : s.label;
+    return `<tr class="${sel?'selected':''}" onclick="selectCSGScenario('${escAttr(s.id)}')"
+               title="${escHtml(s.description)}">
+      <td style="color:#4b5563;text-align:right;padding-right:6px">${s.rank}</td>
+      <td style="color:${sel?'#86efac':'#d1fae5'}">${escHtml(lbl)}</td>
     </tr>`;
   }).join('');
 }
 
-function toggleDesc(ev, cell) {
-  ev.stopPropagation();
-  const row = cell.closest('tr');
-  const sc  = allScenarios.find(s => s.id === row.dataset.id && s.engine === row.dataset.engine);
-  if (!sc) return;
-  if (cell.classList.contains('expanded')) {
-    cell.classList.remove('expanded');
-    const d = sc.description;
-    cell.textContent = d.length > 80 ? d.slice(0, 80) + '…' : d;
+function selectCSGScenario(id) {
+  selectedCSG = allScenarios.find(s => s.engine === 'csg' && s.id === id);
+  if (!selectedCSG) return;
+  csgEdits = {};
+  updateRunButtons();
+  renderCSGTable();
+  updateStatusLabels();
+  applyInheritance();
+  if (activeParamTab === 'csg') renderParams();
+}
+
+// ═══════════════════════════════════════════════════════════════
+// KHARG TABLE
+// ═══════════════════════════════════════════════════════════════
+function sortKharg(col) {
+  if (khargSortCol === col) khargSortDir = khargSortDir === 'asc' ? 'desc' : 'asc';
+  else { khargSortCol = col; khargSortDir = 'asc'; }
+  renderKhargTable();
+}
+
+function renderKhargTable() {
+  const allowed = realismFilter(allScenarios, 'kharg');
+  const q = document.getElementById('kharg-search').value.toLowerCase();
+  let rows = allScenarios.filter(s =>
+    s.engine === 'kharg' && allowed.has(s.id) &&
+    (!q || s.label.toLowerCase().includes(q) || s.description.toLowerCase().includes(q))
+  );
+  rows = sortRows(rows, khargSortCol, khargSortDir);
+  updateSortHeaders('kharg-th-rank','kharg-th-label', khargSortCol, khargSortDir);
+  const tbody = document.getElementById('kharg-tbody');
+  if (!rows.length) {
+    tbody.innerHTML = '<tr><td colspan="2" style="color:#4b5563;padding:6px;text-align:center">No matches</td></tr>';
+    return;
+  }
+  tbody.innerHTML = rows.map(s => {
+    const sel = selectedKharg && selectedKharg.id === s.id;
+    const lbl = s.label.length > 48 ? s.label.slice(0,48)+'…' : s.label;
+    return `<tr class="${sel?'selected':''}" onclick="selectKhargScenario('${escAttr(s.id)}')"
+               title="${escHtml(s.description)}">
+      <td style="color:#4b5563;text-align:right;padding-right:6px">${s.rank}</td>
+      <td style="color:${sel?'#86efac':'#d1fae5'}">${escHtml(lbl)}</td>
+    </tr>`;
+  }).join('');
+}
+
+function selectKhargScenario(id) {
+  selectedKharg = allScenarios.find(s => s.engine === 'kharg' && s.id === id);
+  if (!selectedKharg) return;
+  khargEdits = {};
+  updateRunButtons();
+  renderKhargTable();
+  updateStatusLabels();
+  if (activeParamTab === 'kharg') renderParams();
+}
+
+// ═══════════════════════════════════════════════════════════════
+// PARAM INHERITANCE
+// ═══════════════════════════════════════════════════════════════
+function onInheritToggle() { applyInheritance(); }
+
+function applyInheritance() {
+  const toggle = document.getElementById('inherit-toggle');
+  const note   = document.getElementById('param-inherit-note');
+  if (!toggle.checked || !selectedCSG || !selectedKharg) {
+    note.style.display = 'none';
+    return;
+  }
+  const inh = CSG_INHERITANCE[selectedCSG.id];
+  if (!inh) { note.style.display = 'none'; return; }
+
+  let changed = [];
+  for (const [k, v] of Object.entries(inh)) {
+    const orig = selectedKharg.params[k];
+    if (orig !== undefined && orig !== v) {
+      khargEdits[k] = v;
+      changed.push(`${k.replace(/_/g,' ')} → ${v}`);
+    }
+  }
+
+  if (changed.length) {
+    note.textContent = '⬇ Inherited from CSG: ' + changed.join(' · ');
+    note.style.display = 'block';
+    if (activeParamTab === 'kharg') renderParams();
   } else {
-    cell.classList.add('expanded');
-    cell.textContent = sc.description;
+    note.style.display = 'none';
   }
 }
 
-// ─────────────────────────────────────────────────────────
-// Scenario selection & param editor
-// ─────────────────────────────────────────────────────────
-function selectScenario(id, engine) {
-  selectedSc = allScenarios.find(s => s.id === id && s.engine === engine);
-  if (!selectedSc) return;
-  editedParams = {};
-  document.getElementById('selected-label').textContent  = selectedSc.label;
-  document.getElementById('selected-engine').textContent = engine === 'kharg' ? 'Engine: Kharg Island' : 'Engine: CSG Naval';
-  document.getElementById('btn-run').disabled = false;
-  document.getElementById('btn-compare').disabled = false;
+// ═══════════════════════════════════════════════════════════════
+// PARAM EDITOR
+// ═══════════════════════════════════════════════════════════════
+function switchParamTab(tab) {
+  activeParamTab = tab;
+  document.getElementById('ptab-csg').classList.toggle('active',   tab === 'csg');
+  document.getElementById('ptab-kharg').classList.toggle('active', tab === 'kharg');
   renderParams();
-  renderTable();  // re-highlight selected row
-}
-
-function snakeToTitle(s) {
-  return s.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
 }
 
 function renderParams() {
-  if (!selectedSc) return;
-  const params = selectedSc.params;
+  const sc    = activeParamTab === 'csg' ? selectedCSG : selectedKharg;
+  const edits = activeParamTab === 'csg' ? csgEdits    : khargEdits;
+  const lbl   = document.getElementById('param-selected-label');
   const editor = document.getElementById('param-editor');
-  let html = '<table class="w-full text-xs border-collapse">';
-  html += '<thead><tr class="text-green-700"><th class="py-0.5 pr-2 text-left w-40">Parameter</th><th class="py-0.5 text-left">Value</th></tr></thead><tbody>';
 
-  for (const [k, v] of Object.entries(params)) {
-    const isFloat = !Number.isInteger(v) && typeof v === 'number';
-    const display = isFloat ? v.toFixed(4) : String(v);
-    const isChanged = editedParams.hasOwnProperty(k);
-    const curVal = isChanged ? editedParams[k] : display;
-    const inputType = typeof v === 'boolean' ? 'checkbox' : (typeof v === 'number' ? 'number' : 'text');
-    const step = isFloat ? '0.0001' : '1';
-    const inputId = `p_${k}`;
-
-    if (typeof v === 'boolean') {
-      html += `<tr class="border-b border-green-900 border-opacity-20">
-        <td class="py-0.5 pr-2 text-gray-400">${snakeToTitle(k)}</td>
-        <td class="py-0.5">
-          <input type="checkbox" id="${inputId}" ${v ? 'checked' : ''}
-            onchange="paramChanged('${k}', this.checked)"
-            class="${isChanged ? 'accent-amber-400' : 'accent-green-500'}">
-        </td></tr>`;
-    } else {
-      html += `<tr class="border-b border-green-900 border-opacity-20">
-        <td class="py-0.5 pr-2 text-gray-400">${snakeToTitle(k)}</td>
-        <td class="py-0.5">
-          <input type="${inputType}" id="${inputId}" value="${curVal}"
-            step="${step}" placeholder="${display}"
-            oninput="paramChanged('${k}', this.value)"
-            class="${isChanged ? 'param-changed' : ''}">
-        </td></tr>`;
-    }
+  if (!sc) {
+    lbl.textContent = `— select a scenario in Step ${activeParamTab === 'csg' ? 1 : 2} —`;
+    editor.innerHTML = `<div style="color:#4b5563;font-size:0.7rem;text-align:center;padding:20px">
+      Select a ${activeParamTab === 'csg' ? 'CSG' : 'Kharg Island'} scenario first.</div>`;
+    return;
   }
-  html += '</tbody></table>';
+
+  lbl.textContent = sc.label;
+
+  // Group params
+  const groups = {};
+  for (const [k, v] of Object.entries(sc.params)) {
+    const meta = PARAM_META[k] || { g: 'Other', l: snakeToTitle(k), d: '' };
+    if (!groups[meta.g]) groups[meta.g] = [];
+    groups[meta.g].push({ k, v, meta });
+  }
+
+  let html = '';
+  for (const [gName, items] of Object.entries(groups)) {
+    const gid = `grp_${activeParamTab}_${gName.replace(/\s+/g,'_')}`;
+    html += `<div style="margin-bottom:6px">
+      <div class="param-group-header" onclick="toggleGroup('${gid}')">
+        <span>${escHtml(gName)}</span>
+        <span id="${gid}_arrow" style="font-size:0.65rem">▼</span>
+      </div>
+      <div id="${gid}_body" style="padding-top:2px">`;
+
+    for (const {k, v, meta} of items) {
+      const curVal = edits.hasOwnProperty(k) ? edits[k] : v;
+      const changed = edits.hasOwnProperty(k);
+      const isFloat = typeof v === 'number' && !Number.isInteger(v);
+      const displayVal = isFloat ? (typeof curVal === 'number' ? curVal.toFixed(4) : curVal) : curVal;
+
+      html += `<div class="param-row">
+        <div>
+          <div class="param-label">${escHtml(meta.l)}</div>
+          ${meta.d ? `<div class="param-desc">${escHtml(meta.d)}</div>` : ''}
+        </div>
+        <div>`;
+
+      if (typeof v === 'boolean') {
+        html += `<input type="checkbox" ${curVal ? 'checked' : ''}
+          class="${changed?'changed':''}"
+          onchange="paramChanged('${k}', this.checked)">`;
+      } else {
+        const step = isFloat ? '0.0001' : '1';
+        html += `<input type="number" value="${escHtml(String(displayVal))}"
+          step="${step}" placeholder="${escHtml(String(isFloat ? v.toFixed(4) : v))}"
+          class="${changed?'param-changed':''}"
+          oninput="paramChanged('${k}', this.value)">`;
+      }
+
+      html += `</div></div>`;
+    }
+    html += `</div></div>`;
+  }
+
   editor.innerHTML = html;
 }
 
+function toggleGroup(gid) {
+  const body  = document.getElementById(gid + '_body');
+  const arrow = document.getElementById(gid + '_arrow');
+  if (!body) return;
+  const collapsed = body.style.display === 'none';
+  body.style.display  = collapsed ? '' : 'none';
+  arrow.textContent   = collapsed ? '▼' : '►';
+}
+
 function paramChanged(key, rawVal) {
-  if (!selectedSc) return;
-  const original = selectedSc.params[key];
+  const sc    = activeParamTab === 'csg' ? selectedCSG : selectedKharg;
+  const edits = activeParamTab === 'csg' ? csgEdits    : khargEdits;
+  if (!sc) return;
+
+  const orig = sc.params[key];
   let val = rawVal;
+  if (typeof orig === 'boolean') val = Boolean(rawVal);
+  else if (typeof orig === 'number') val = Number(rawVal);
 
-  if (typeof original === 'boolean') {
-    val = Boolean(rawVal);
-  } else if (typeof original === 'number') {
-    val = Number(rawVal);
-  }
+  const origStr = typeof orig === 'number' && !Number.isInteger(orig)
+    ? orig.toFixed(4) : String(orig);
 
-  // Mark as changed only if different from original
-  const origDisplay = typeof original === 'number' && !Number.isInteger(original)
-    ? original.toFixed(4) : String(original);
-
-  if (String(val) === String(origDisplay) || val === original) {
-    delete editedParams[key];
-  } else {
-    editedParams[key] = val;
-  }
-
-  // Highlight the input
-  const el = document.getElementById(`p_${key}`);
-  if (el && el.type !== 'checkbox') {
-    if (editedParams.hasOwnProperty(key)) {
-      el.classList.add('param-changed');
-    } else {
-      el.classList.remove('param-changed');
-    }
-  }
+  if (String(val) === origStr || val === orig) delete edits[key];
+  else edits[key] = val;
 }
 
-function resetParams() {
-  editedParams = {};
-  if (selectedSc) renderParams();
+function resetCurrentParams() {
+  if (activeParamTab === 'csg') csgEdits = {};
+  else khargEdits = {};
+  applyInheritance();
+  renderParams();
 }
 
-// ─────────────────────────────────────────────────────────
-// Run scenario
-// ─────────────────────────────────────────────────────────
-async function runScenario() {
-  if (!selectedSc) return;
+// ═══════════════════════════════════════════════════════════════
+// RUN LOGIC
+// ═══════════════════════════════════════════════════════════════
+function updateRunButtons() {
+  document.getElementById('btn-campaign').disabled = !(selectedCSG && selectedKharg);
+  document.getElementById('btn-run-csg').disabled   = !selectedCSG;
+  document.getElementById('btn-run-kharg').disabled = !selectedKharg;
+}
 
-  // Reset output panel
-  const logPre = document.getElementById('log-output');
-  logPre.textContent = '';
-  document.getElementById('stats-card').classList.add('hidden');
-  document.getElementById('btn-download').classList.add('hidden');
-  document.getElementById('run-status-text').textContent = 'Starting...';
+function updateStatusLabels() {
+  if (selectedCSG)
+    document.getElementById('csg-status-label').textContent =
+      selectedCSG.label.length > 36 ? selectedCSG.label.slice(0,36)+'…' : selectedCSG.label;
+  if (selectedKharg)
+    document.getElementById('kharg-status-label').textContent =
+      selectedKharg.label.length > 36 ? selectedKharg.label.slice(0,36)+'…' : selectedKharg.label;
+}
 
-  // Cancel any existing SSE
-  if (currentSse) { currentSse.close(); currentSse = null; }
+async function runCampaign() {
+  if (!selectedCSG || !selectedKharg) return;
+  clearCampaignResults();
+  document.getElementById('campaign-idle').style.display = 'none';
+  switchResultTab('campaign');
+  // Run both in parallel
+  await Promise.all([
+    startJob('csg',   selectedCSG,   csgEdits),
+    startJob('kharg', selectedKharg, khargEdits),
+  ]);
+}
 
-  const body = {
-    id:     selectedSc.id,
-    engine: selectedSc.engine,
-    params: editedParams,
-  };
+async function runSingle(which) {
+  const sc    = which === 'csg' ? selectedCSG   : selectedKharg;
+  const edits = which === 'csg' ? csgEdits      : khargEdits;
+  if (!sc) return;
+  clearJobResults(which);
+  document.getElementById('campaign-idle').style.display = 'none';
+  switchResultTab('campaign');
+  await startJob(which, sc, edits);
+}
 
-  setStatus(`Running ${selectedSc.label}...`);
-  document.getElementById('btn-run').disabled = true;
+async function startJob(which, sc, edits) {
+  setDot(which, 'running');
+  setStatus(`Running ${which.toUpperCase()}: ${sc.label.slice(0,40)}…`);
+
+  // Clear old log
+  const logEl = document.getElementById(`log-${which}`);
+  logEl.textContent = '';
 
   try {
-    const res  = await fetch(`${API_BASE}/api/run`, {
+    const res = await fetch(`${API_BASE}/api/run`, {
       method: 'POST',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify(body),
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id: sc.id, engine: sc.engine, params: edits }),
     });
-    const data = await res.json();
-    currentJobId = data.job_id;
-    document.getElementById('run-status-text').textContent = `Job ${currentJobId.slice(0,8)}… running`;
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const { job_id } = await res.json();
 
-    // Open SSE stream
-    currentSse = new EventSource(`${API_BASE}/api/stream/${currentJobId}`);
-    currentSse.onmessage = (e) => {
-      const msg = e.data;
-      if (msg === '__DONE__') {
-        currentSse.close(); currentSse = null;
-        onRunDone(currentJobId);
-      } else if (msg.startsWith('__ERROR__:')) {
-        logPre.textContent += '\n[ERROR] ' + msg.slice(10);
-        logPre.scrollTop = logPre.scrollHeight;
-        document.getElementById('run-status-text').textContent = 'Run failed.';
-        setStatus('Run failed');
-        document.getElementById('btn-run').disabled = false;
-        currentSse.close(); currentSse = null;
-      } else {
-        logPre.textContent += msg + '\n';
-        logPre.scrollTop = logPre.scrollHeight;
-      }
-    };
-    currentSse.onerror = () => {
-      logPre.textContent += '\n[SSE connection closed]\n';
-      logPre.scrollTop = logPre.scrollHeight;
-      document.getElementById('btn-run').disabled = false;
-    };
-  } catch(err) {
-    document.getElementById('run-status-text').textContent = 'Error: ' + err.message;
-    setStatus('Error: ' + err.message);
-    document.getElementById('btn-run').disabled = false;
+    jobs[which] = { jobId: job_id, status: 'running', label: sc.label, engine: sc.engine };
+
+    openStream(which, job_id);
+  } catch(e) {
+    setDot(which, 'error');
+    setStatus(`Error starting ${which}: ` + e.message);
   }
 }
 
-async function onRunDone(jobId) {
-  document.getElementById('run-status-text').textContent = 'Run complete.';
-  document.getElementById('btn-run').disabled = false;
-  setStatus('Run complete');
+function openStream(which, jobId) {
+  const logEl = document.getElementById(`log-${which}`);
+  const sse = new EventSource(`${API_BASE}/api/stream/${jobId}`);
+
+  sse.onmessage = (e) => {
+    const msg = e.data;
+    if (msg === '__DONE__') {
+      sse.close();
+      onJobDone(which, jobId);
+    } else if (msg.startsWith('__ERROR__:')) {
+      logEl.textContent += '\n[ERROR] ' + msg.slice(10) + '\n';
+      logEl.scrollTop = logEl.scrollHeight;
+      setDot(which, 'error');
+      sse.close();
+      setStatus(`${which.toUpperCase()} run failed`);
+    } else {
+      logEl.textContent += msg + '\n';
+      logEl.scrollTop = logEl.scrollHeight;
+    }
+  };
+  sse.onerror = () => {
+    sse.close();
+    setDot(which, 'error');
+  };
+}
+
+async function onJobDone(which, jobId) {
+  setDot(which, 'done');
+  if (jobs[which]) jobs[which].status = 'done';
+  setStatus(`${which.toUpperCase()} run complete`);
 
   // Show download button
-  const dlBtn = document.getElementById('btn-download');
-  dlBtn.href = `/api/download/${jobId}`;
-  dlBtn.classList.remove('hidden');
+  const dlBtn = document.getElementById(`btn-dl-${which}`);
+  dlBtn.href = `${API_BASE}/api/download/${jobId}`;
+  dlBtn.style.display = '';
 
-  // Fetch results
+  // Fetch result
   try {
     const res    = await fetch(`${API_BASE}/api/results/${jobId}`);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const result = await res.json();
-    renderStats(result);
+    if (jobs[which]) jobs[which].result = result;
 
-    // Store for compare
-    compareSlots[2] = {
-      label:  selectedSc ? selectedSc.label : jobId,
-      result: result,
-      jobId:  jobId,
-    };
+    // Render stats card
+    renderStatsCard(which, result);
+
+    // Check if campaign is complete
+    if (jobs.csg && jobs.csg.status === 'done' &&
+        jobs.kharg && jobs.kharg.status === 'done') {
+      renderCampaignSummary();
+      addToHistory();
+    }
   } catch(e) {
     console.warn('Could not fetch results:', e);
   }
 }
 
-// ─────────────────────────────────────────────────────────
-// Stats card rendering
-// ─────────────────────────────────────────────────────────
-function renderStats(r) {
-  const card    = document.getElementById('stats-card');
-  const content = document.getElementById('stats-content');
-  card.classList.remove('hidden');
+// ═══════════════════════════════════════════════════════════════
+// STATS RENDERING
+// ═══════════════════════════════════════════════════════════════
+function renderStatsCard(which, r) {
+  const wrap    = document.getElementById(`${which}-stats-wrap`);
+  const content = document.getElementById(`${which}-stats-content`);
+  wrap.style.display = '';
 
-  // Detect engine from keys
-  const isKharg = r.hasOwnProperty('marines_alive');
-
-  let rows = [];
-  if (isKharg) {
-    const outcomeClass = r.outcome === 'USMC secured' ? 'stat-val' : (r.outcome === 'IRGC repelled' ? 'stat-bad' : 'stat-warn');
+  let rows;
+  if (which === 'kharg') {
+    const oc = r.outcome === 'USMC secured' ? 'v-good' :
+               r.outcome === 'IRGC repelled' ? 'v-bad' : 'v-warn';
     rows = [
-      ['Outcome', `<span class="${outcomeClass}">${escHtml(r.outcome)}</span>`],
-      ['Marines Alive',    `<span class="stat-val">${r.marines_alive}</span> / ${r.marines_total}`],
-      ['IRGC Neutralized', `<span class="stat-val">${r.irgc_neutralized}</span> / ${r.irgc_total}`],
-      ['Ospreys Lost',     r.ospreys_lost > 0 ? `<span class="stat-bad">${r.ospreys_lost}</span> / ${r.ospreys_total}` : `<span class="stat-val">0</span> / ${r.ospreys_total}`],
-      ['Drone Kills',      `<span class="stat-val">${r.drone_kills}</span>`],
-      ['Ship Hits',        r.ship_hits > 0 ? `<span class="stat-bad">${r.ship_hits}</span>` : `<span class="stat-val">0</span>`],
-      ['Stinger Kills',    r.stinger_kills > 0 ? `<span class="stat-warn">${r.stinger_kills}</span>` : `<span class="stat-val">0</span>`],
-      ['Sunk Ships',       r.sunk_ships && r.sunk_ships.length > 0 ? `<span class="stat-bad">${r.sunk_ships.join(', ')}</span>` : '<span class="stat-val">none</span>'],
+      ['Outcome',          `<span class="${oc}">${escHtml(r.outcome)}</span>`],
+      ['Marines alive',    `<span class="v-good">${r.marines_alive}</span> / ${r.marines_total}`],
+      ['IRGC neutralized', `<span class="v-good">${r.irgc_neutralized}</span> / ${r.irgc_total}`],
+      ['Ospreys lost',     r.ospreys_lost ? `<span class="v-bad">${r.ospreys_lost}</span> / ${r.ospreys_total}` : `<span class="v-good">0</span> / ${r.ospreys_total}`],
+      ['Stinger kills',    r.stinger_kills ? `<span class="v-warn">${r.stinger_kills}</span>` : '<span class="v-good">0</span>'],
+      ['Ship hits',        r.ship_hits ? `<span class="v-bad">${r.ship_hits}</span>` : '<span class="v-good">0</span>'],
+      ['Ships sunk',       r.sunk_ships && r.sunk_ships.length ? `<span class="v-bad">${escHtml(r.sunk_ships.join(', '))}</span>` : '<span class="v-good">none</span>'],
+      ['Drone kills',      `<span class="v-neu">${r.drone_kills}</span>`],
     ];
   } else {
     const ir = (r.intercept_rate_actual * 100).toFixed(1);
-    const iClass = r.intercept_rate_actual >= 0.7 ? 'stat-val' : (r.intercept_rate_actual >= 0.4 ? 'stat-warn' : 'stat-bad');
+    const iCls = r.intercept_rate_actual >= 0.7 ? 'v-good' :
+                 r.intercept_rate_actual >= 0.4 ? 'v-warn' : 'v-bad';
     rows = [
-      ['Launched',          `<span class="stat-val">${(r.n_launched||0).toLocaleString()}</span>`],
-      ['Intercepted',       `<span class="${iClass}">${(r.n_intercepted||0).toLocaleString()}</span>`],
-      ['Breakthrough',      r.n_breakthrough > 500 ? `<span class="stat-bad">${(r.n_breakthrough||0).toLocaleString()}</span>` : `<span class="stat-warn">${(r.n_breakthrough||0).toLocaleString()}</span>`],
-      ['Intercept Rate',    `<span class="${iClass}">${ir}%</span>`],
-      ['Duration',          `<span class="stat-val">${(r.duration_min||0).toFixed(0)} min</span>`],
-      ['Iran Cost',         `<span class="stat-warn">${fmtUsd(r.iran_cost_usd)}</span>`],
-      ['US Total Cost',     `<span class="stat-bad">${fmtUsd(r.us_total_cost_usd)}</span>`],
-      ['Exchange Ratio',    `<span class="${r.exchange_ratio > 5 ? 'stat-bad' : 'stat-warn'}">${(r.exchange_ratio||0).toFixed(1)}:1</span>`],
-      ['US KIA',            r.us_kia > 100 ? `<span class="stat-bad">${(r.us_kia||0).toLocaleString()}</span>` : `<span class="stat-warn">${(r.us_kia||0).toLocaleString()}</span>`],
-      ['US WIA',            r.us_wia > 200 ? `<span class="stat-bad">${(r.us_wia||0).toLocaleString()}</span>` : `<span class="stat-warn">${(r.us_wia||0).toLocaleString()}</span>`],
+      ['Launched',         `<span class="v-neu">${(r.n_launched||0).toLocaleString()}</span>`],
+      ['Intercepted',      `<span class="${iCls}">${(r.n_intercepted||0).toLocaleString()}</span>`],
+      ['Breakthrough',     r.n_breakthrough > 500 ? `<span class="v-bad">${(r.n_breakthrough||0).toLocaleString()}</span>` : `<span class="v-warn">${(r.n_breakthrough||0).toLocaleString()}</span>`],
+      ['Intercept rate',   `<span class="${iCls}">${ir}%</span>`],
+      ['Duration',         `<span class="v-neu">${(r.duration_min||0).toFixed(0)} min</span>`],
+      ['Iran cost',        `<span class="v-warn">${fmtUsd(r.iran_cost_usd)}</span>`],
+      ['US total cost',    `<span class="v-bad">${fmtUsd(r.us_total_cost_usd)}</span>`],
+      ['Exchange ratio',   `<span class="${r.exchange_ratio > 5 ? 'v-bad':'v-warn'}">${(r.exchange_ratio||0).toFixed(1)}:1</span>`],
+      ['US KIA',           r.us_kia > 100 ? `<span class="v-bad">${(r.us_kia||0).toLocaleString()}</span>` : `<span class="v-warn">${(r.us_kia||0).toLocaleString()}</span>`],
     ];
   }
 
-  content.innerHTML = '<table class="w-full text-xs border-collapse">' +
-    rows.map(([k,v]) =>
-      `<tr class="border-b border-green-900 border-opacity-20">
-        <td class="py-0.5 pr-3 text-gray-400 w-36">${k}</td>
-        <td class="py-0.5">${v}</td>
-      </tr>`
-    ).join('') + '</table>';
+  content.innerHTML = `<table class="stat-table">${rows.map(([k,v]) =>
+    `<tr><td>${k}</td><td>${v}</td></tr>`).join('')}</table>`;
+}
+
+function renderCampaignSummary() {
+  const csgR   = jobs.csg   && jobs.csg.result;
+  const khargR = jobs.kharg && jobs.kharg.result;
+  if (!csgR || !khargR) return;
+
+  const wrap    = document.getElementById('campaign-summary-wrap');
+  const content = document.getElementById('campaign-summary-content');
+  wrap.style.display = '';
+
+  const outcome   = khargR.outcome || 'Unknown';
+  const outCls    = outcome === 'USMC secured' ? 'v-good' : outcome === 'IRGC repelled' ? 'v-bad' : 'v-warn';
+  const bt        = csgR.n_breakthrough || 0;
+  const fleetCls  = bt < 100 ? 'v-good' : bt < 500 ? 'v-warn' : 'v-bad';
+  const totalCost = (csgR.us_total_cost_usd || 0) + (khargR.ospreys_lost || 0) * 67e6;
+
+  content.innerHTML = `
+    <table class="stat-table">
+      <tr><td colspan="2" style="color:#22c55e;font-weight:600;padding-bottom:4px">
+        Campaign Outcome</td></tr>
+      <tr><td>Island assault</td><td><span class="${outCls}">${escHtml(outcome)}</span></td></tr>
+      <tr><td>Fleet breakthrough hits</td><td><span class="${fleetCls}">${bt.toLocaleString()}</span></td></tr>
+      <tr><td>Ospreys lost</td><td>${khargR.ospreys_lost} / ${khargR.ospreys_total}</td></tr>
+      <tr><td>Marines alive</td><td>${khargR.marines_alive} / ${khargR.marines_total}</td></tr>
+      <tr><td>US naval cost</td><td>${fmtUsd(csgR.us_total_cost_usd)}</td></tr>
+      <tr><td>Iran cost (naval)</td><td>${fmtUsd(csgR.iran_cost_usd)}</td></tr>
+      <tr><td>Exchange ratio</td><td>${(csgR.exchange_ratio||0).toFixed(1)}:1</td></tr>
+      <tr><td>US KIA (naval)</td><td>${(csgR.us_kia||0).toLocaleString()}</td></tr>
+    </table>`;
+}
+
+// ═══════════════════════════════════════════════════════════════
+// HISTORY
+// ═══════════════════════════════════════════════════════════════
+function addToHistory() {
+  const entry = {
+    ts:         new Date(),
+    csgLabel:   jobs.csg   ? jobs.csg.label   : '—',
+    khargLabel: jobs.kharg ? jobs.kharg.label : '—',
+    csgResult:  jobs.csg   ? jobs.csg.result   : null,
+    khargResult:jobs.kharg ? jobs.kharg.result : null,
+    csgJobId:   jobs.csg   ? jobs.csg.jobId    : null,
+    khargJobId: jobs.kharg ? jobs.kharg.jobId  : null,
+  };
+  runHistory.unshift(entry);
+  document.getElementById('history-count').textContent = runHistory.length;
+  renderHistory();
+}
+
+function renderHistory() {
+  const list = document.getElementById('history-list');
+  if (!runHistory.length) {
+    list.innerHTML = '<div style="color:#4b5563;text-align:center;padding:24px">No runs yet.</div>';
+    return;
+  }
+  list.innerHTML = runHistory.map((e, i) => {
+    const kr = e.khargResult;
+    const cr = e.csgResult;
+    const outCls  = kr && kr.outcome === 'USMC secured' ? 'v-good' :
+                    kr && kr.outcome === 'IRGC repelled' ? 'v-bad' : 'v-warn';
+    const outcome = kr ? kr.outcome : '…';
+    const bt      = cr ? (cr.n_breakthrough||0) : '?';
+    const time    = e.ts.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
+
+    return `<div class="hist-item" onclick="toggleHistory(${i})" id="hist-${i}">
+      <div class="flex items-center gap-2">
+        <span style="color:#4b5563;font-size:0.6rem">${time}</span>
+        <span class="${outCls}" style="font-size:0.65rem">${escHtml(outcome)}</span>
+        <span style="color:#4b5563;font-size:0.6rem">· ${bt} breakthroughs</span>
+      </div>
+      <div style="color:#6b7280;font-size:0.62rem;margin-top:1px">
+        CSG: ${escHtml(e.csgLabel.slice(0,40))}
+      </div>
+      <div style="color:#6b7280;font-size:0.62rem">
+        Kharg: ${escHtml(e.khargLabel.slice(0,40))}
+      </div>
+      <div id="hist-detail-${i}" style="display:none;margin-top:6px">
+        ${kr && cr ? renderHistoryDetail(cr, kr, e) : ''}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function renderHistoryDetail(cr, kr, e) {
+  const dlCsg   = e.csgJobId   ? `<a href="${API_BASE}/api/download/${e.csgJobId}"   class="btn btn-green btn-sm" download>⬇ CSG KMZ</a>`   : '';
+  const dlKharg = e.khargJobId ? `<a href="${API_BASE}/api/download/${e.khargJobId}" class="btn btn-green btn-sm" download>⬇ Kharg KMZ</a>` : '';
+  return `<table class="stat-table" style="font-size:0.62rem">
+    <tr><td style="color:#22c55e;font-weight:600" colspan="2">Naval</td></tr>
+    <tr><td>Breakthrough</td><td>${(cr.n_breakthrough||0).toLocaleString()}</td></tr>
+    <tr><td>Intercept rate</td><td>${((cr.intercept_rate_actual||0)*100).toFixed(1)}%</td></tr>
+    <tr><td>US cost</td><td>${fmtUsd(cr.us_total_cost_usd)}</td></tr>
+    <tr><td style="color:#22c55e;font-weight:600" colspan="2">Island</td></tr>
+    <tr><td>Outcome</td><td>${escHtml(kr.outcome)}</td></tr>
+    <tr><td>Marines alive</td><td>${kr.marines_alive}/${kr.marines_total}</td></tr>
+    <tr><td>Ospreys lost</td><td>${kr.ospreys_lost}/${kr.ospreys_total}</td></tr>
+  </table>
+  <div class="flex gap-2 mt-2">${dlCsg}${dlKharg}</div>`;
+}
+
+function toggleHistory(i) {
+  const el = document.getElementById(`hist-detail-${i}`);
+  if (el) el.style.display = el.style.display === 'none' ? '' : 'none';
+  document.getElementById(`hist-${i}`).classList.toggle('expanded');
+}
+
+// ═══════════════════════════════════════════════════════════════
+// TAB SWITCHING
+// ═══════════════════════════════════════════════════════════════
+function switchResultTab(tab) {
+  activeResultTab = tab;
+  ['campaign','log','history'].forEach(t => {
+    document.getElementById(`rtab-${t}`).classList.toggle('active', t === tab);
+    const panel = document.getElementById(`panel-${t}`);
+    if (panel) {
+      panel.style.display = t === tab ? 'flex' : 'none';
+      if (t !== 'campaign') panel.style.flexDirection = 'column';
+    }
+  });
+}
+
+function switchLogTab(tab) {
+  activeLogTab = tab;
+  ['csg','kharg'].forEach(t => {
+    document.getElementById(`ltab-${t}`).classList.toggle('active', t === tab);
+    document.getElementById(`log-${t}`).style.display = t === tab ? '' : 'none';
+  });
+}
+
+// ═══════════════════════════════════════════════════════════════
+// HELPERS
+// ═══════════════════════════════════════════════════════════════
+function clearCampaignResults() {
+  ['csg','kharg'].forEach(clearJobResults);
+  document.getElementById('campaign-summary-wrap').style.display = 'none';
+}
+
+function clearJobResults(which) {
+  setDot(which, 'idle');
+  document.getElementById(`${which}-stats-wrap`).style.display = 'none';
+  document.getElementById(`btn-dl-${which}`).style.display = 'none';
+  jobs[which] = null;
+}
+
+function setDot(which, state) {
+  const dot = document.getElementById(`${which}-dot`);
+  dot.className = `dot dot-${state}`;
+}
+
+function setStatus(msg) {
+  document.getElementById('status-bar').textContent = msg;
+}
+
+function updateSortHeaders(rankId, labelId, col, dir) {
+  const rth = document.getElementById(rankId);
+  const lth = document.getElementById(labelId);
+  if (rth) rth.className = col === 'rank'  ? (dir === 'asc' ? 'sort-asc' : 'sort-desc') : '';
+  if (lth) lth.className = col === 'label' ? (dir === 'asc' ? 'sort-asc' : 'sort-desc') : '';
+}
+
+function sortRows(rows, col, dir) {
+  return [...rows].sort((a, b) => {
+    let av = a[col], bv = b[col];
+    if (typeof av === 'string') av = av.toLowerCase();
+    if (typeof bv === 'string') bv = bv.toLowerCase();
+    return av < bv ? (dir==='asc'?-1:1) : av > bv ? (dir==='asc'?1:-1) : 0;
+  });
+}
+
+function snakeToTitle(s) {
+  return s.replace(/_/g,' ').replace(/\b\w/g, c => c.toUpperCase());
 }
 
 function fmtUsd(v) {
@@ -571,124 +1103,21 @@ function fmtUsd(v) {
   return '$' + Math.round(v).toLocaleString();
 }
 
-// ─────────────────────────────────────────────────────────
-// Compare
-// ─────────────────────────────────────────────────────────
-function addToCompare() {
-  if (!compareSlots[2]) {
-    alert('Run a scenario first to get results for comparison.');
-    return;
-  }
-
-  // Shift: slot1 = slot2, then put latest in slot2
-  if (!compareSlots[0]) {
-    compareSlots[0] = compareSlots[2];
-  } else if (!compareSlots[1]) {
-    compareSlots[1] = compareSlots[2];
-  } else {
-    compareSlots[0] = compareSlots[1];
-    compareSlots[1] = compareSlots[2];
-  }
-  compareSlots[2] = null;
-
-  updateCompareCount();
-
-  if (compareSlots[0] && compareSlots[1]) {
-    renderCompare();
-  }
-}
-
-function clearCompare() {
-  compareSlots = [null, null];
-  compareSlots[2] = null;
-  updateCompareCount();
-  document.getElementById('compare-section').classList.add('hidden');
-}
-
-function updateCompareCount() {
-  const n = (compareSlots[0] ? 1 : 0) + (compareSlots[1] ? 1 : 0);
-  document.getElementById('compare-count').textContent = n + '/2';
-}
-
-function renderCompare() {
-  const s1 = compareSlots[0];
-  const s2 = compareSlots[1];
-  if (!s1 || !s2) return;
-
-  const r1 = s1.result, r2 = s2.result;
-  const isKharg = r1.hasOwnProperty('marines_alive');
-
-  let metricDefs;
-  if (isKharg) {
-    metricDefs = [
-      ['Outcome',          r => r.outcome],
-      ['Marines Alive',    r => `${r.marines_alive} / ${r.marines_total}`],
-      ['IRGC Neutralized', r => `${r.irgc_neutralized} / ${r.irgc_total}`],
-      ['Ospreys Lost',     r => `${r.ospreys_lost} / ${r.ospreys_total}`],
-      ['Drone Kills',      r => r.drone_kills],
-      ['Ship Hits',        r => r.ship_hits],
-      ['Stinger Kills',    r => r.stinger_kills],
-      ['Sunk Ships',       r => (r.sunk_ships||[]).join(', ') || 'none'],
-    ];
-  } else {
-    metricDefs = [
-      ['Launched',         r => (r.n_launched||0).toLocaleString()],
-      ['Intercepted',      r => (r.n_intercepted||0).toLocaleString()],
-      ['Breakthrough',     r => (r.n_breakthrough||0).toLocaleString()],
-      ['Intercept Rate',   r => ((r.intercept_rate_actual||0)*100).toFixed(1)+'%'],
-      ['Duration (min)',   r => (r.duration_min||0).toFixed(0)],
-      ['Iran Cost',        r => fmtUsd(r.iran_cost_usd)],
-      ['US Total Cost',    r => fmtUsd(r.us_total_cost_usd)],
-      ['Exchange Ratio',   r => (r.exchange_ratio||0).toFixed(1)+':1'],
-      ['US KIA',           r => (r.us_kia||0).toLocaleString()],
-      ['US WIA',           r => (r.us_wia||0).toLocaleString()],
-    ];
-  }
-
-  const section = document.getElementById('compare-section');
-  const content = document.getElementById('compare-content');
-  section.classList.remove('hidden');
-
-  const maxLabel = 28;
-  content.innerHTML = `
-    <table class="w-full text-xs border-collapse">
-      <thead>
-        <tr class="text-green-700">
-          <th class="py-0.5 pr-2 text-left w-32">Metric</th>
-          <th class="py-0.5 pr-2 text-left" title="${escHtml(s1.label)}">${escHtml(s1.label.length > maxLabel ? s1.label.slice(0,maxLabel)+'…' : s1.label)}</th>
-          <th class="py-0.5 text-left" title="${escHtml(s2.label)}">${escHtml(s2.label.length > maxLabel ? s2.label.slice(0,maxLabel)+'…' : s2.label)}</th>
-        </tr>
-      </thead>
-      <tbody>
-        ${metricDefs.map(([label, fn]) => `
-          <tr class="border-b border-green-900 border-opacity-20">
-            <td class="py-0.5 pr-2 text-gray-400">${label}</td>
-            <td class="py-0.5 pr-2 text-green-200">${escHtml(String(fn(r1)))}</td>
-            <td class="py-0.5 text-green-200">${escHtml(String(fn(r2)))}</td>
-          </tr>`).join('')}
-      </tbody>
-    </table>`;
-}
-
-// ─────────────────────────────────────────────────────────
-// Utilities
-// ─────────────────────────────────────────────────────────
-function setStatus(msg) {
-  document.getElementById('status-bar').textContent = msg;
-}
-
 function escHtml(str) {
-  return String(str)
-    .replace(/&/g,'&amp;')
-    .replace(/</g,'&lt;')
-    .replace(/>/g,'&gt;')
-    .replace(/"/g,'&quot;')
-    .replace(/'/g,'&#39;');
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
 }
+function escAttr(str) { return escHtml(str); }
 
-// ─────────────────────────────────────────────────────────
-// Init
-// ─────────────────────────────────────────────────────────
+// ═══════════════════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════════════════
+// Fix initial panel display states
+document.getElementById('panel-campaign').style.display = 'flex';
+document.getElementById('panel-campaign').style.flexDirection = 'column';
+document.getElementById('panel-log').style.display      = 'none';
+document.getElementById('panel-history').style.display  = 'none';
+
 boot();
 </script>
 </body>
