@@ -21,3 +21,8 @@ build/
 # OS
 .DS_Store
 Thumbs.db
+
+# Claude Code internals
+CUsers*/
+settings.local.json
+worktrees/
